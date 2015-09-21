@@ -1,0 +1,56 @@
+extends layout
+
+block content
+      script(src='//code.jquery.com/jquery-1.11.3.min.js')
+
+
+      h1= title
+      p Welcome to #{title}
+
+      .fb-like(data-share='true', data-width='450', data-show-faces='true')
+
+      fb:login-button(scope='email,public_key',auto_logout_link='true', onlogin='checkLoginState();')
+      #status
+
+
+ 
+      .col-lg-6
+            .input-group
+                  //- span.input-group-btn @
+                  span.input-group-addon @
+                        //- button.btn.btn-default(type='button') Go!       
+                        
+                  input.form-control(type='text', placeholder='Search for...')
+                  span.input-group-btn
+                        button.btn.btn-default(type='button') Go!
+              
+                  span.input-group-addon @
+                        //- button.btn.btn-default(type='button') Go!       
+                        
+                  input.form-control(type='text', placeholder='Search for...')
+                  span.input-group-btn
+                        button.btn.btn-default(type='button') Go!
+
+
+      p site:
+            input#site(type="text", value="")
+
+      p key:
+            input#keyword(type="text", value="weeknd")
+            
+      p phrase:
+            input#phrase(type="text" , value="only loser go to school. I taught myself how to move.")
+
+      p length:
+            input#length(type="text", value="10")
+
+      p your password:
+            input#password(type="text", value="10")
+            button.copybtn.btn.btn-lg.btn-warning copy
+                  span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate reload
+            button(type='button', onClick="exec();") Accept Password!
+      script(src='/javascripts/bootstrap.min.js')  
+      script(src='/javascripts/index.js')
+
+
+
