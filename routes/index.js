@@ -25,20 +25,22 @@ router.post('/', function(req, res, next) {
         var site = req.body.site;
         var length = 8;
         
-        var words = keyword.split();
+
         
-        var data = phrase+keyword+site+length;
-        bcrypt.hash(data, 8, function(err, hash) {
-        	if(err){
-        		console.error(err);
-        		res.json(JSON.stringify(err));
-        		return
-        	}
-        	gen(req,function(pword) {
-        		console.log("your new pword: "+ pword);
-        		req.session.pword = pword;
-        		res.json(pword);
-        	});
+
+    	gen(req,function(pword) {
+    		console.log("your new pword: "+ pword);
+    		
+            req.session.data = {
+                phrase: phrase,
+                keyword: keyword,
+                site: site,
+                password_length: length,
+                password: pword,
+                time: Date.now(),
+                user: JSON.stringify(user)
+            }
+    		res.json(pword);
     	});
 	}
   //res.render('index', { title: 'Express' });
@@ -51,11 +53,10 @@ router.post('/accept' , function(req,res,next){
 	var key = req.session.user.public_key.toString();
 	var publicKey = openpgp.key.readArmored(key);
 	//console.log(JSON.stringify(publicKey));
-
-	openpgp.encryptMessage(publicKey.keys, req.session.pword).then(function(pgpMessage) {
+    var msg = JSON.stringify(req.session.data)
+	openpgp.encryptMessage(publicKey.keys, msg).then(function(pgpMessage) {
 	    // success
         var newPword = new models.Pwords({userid: user.id, 
-        								salted_hash: "hash", 
         								time: Date.now(),
         								encrypted_password: pgpMessage})
 		

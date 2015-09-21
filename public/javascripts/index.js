@@ -133,6 +133,7 @@
                // Now that we've selected the anchor text, execute the copy command  
                var successful = document.execCommand('copy');
                var msg = successful ? 'successful' : 'unsuccessful';
+               $('#message').html('password successful encrypted and stored. <br> password copied to clipboard')
                console.log('Copy password command was ' + msg);
            } catch (err) {
                console.log('Oops, unable to copy');
