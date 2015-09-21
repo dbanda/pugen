@@ -10,7 +10,7 @@ function gen (req, next) {
 
 	var words = keyword.split();
 
-	var Tagger = require("./node-stanford-postagger/postagger").Tagger;
+	var Tagger = require("./stanford-nlp/postagger").Tagger;
 	var tagger = new Tagger({
 	  port: "9000",
 	  host: "localhost"
