@@ -57,11 +57,14 @@ router.post('/accept' , function(req,res,next){
 	openpgp.encryptMessage(publicKey.keys, msg).then(function(pgpMessage) {
 	    // success
         var newPword = new models.Pwords({userid: user.id, 
+                                        phrase: req.session.phrase,
+                                        site: req.session.site,
         								time: Date.now(),
         								encrypted_password: pgpMessage})
 		
 		newPword.save(function(err, user){
-			res.json(req.session.pword);
+            console.log('encyption complete');
+			res.json(req.session.data.password);
 
 		})
 	}).catch(function(error) {

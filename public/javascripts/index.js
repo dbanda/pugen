@@ -117,31 +117,14 @@
    }
 
    function accept() {
+       console.log("accept");
        $.ajax({
            type: "POST",
            url: "/accept",
        }).done(function(data) {
+           console.log("accept: " + data);
            $('#password').val(data);
-           window.getSelection().removeAllRanges();
-           var password = document.querySelector('#password');
-           password.select();
-           var range = document.createRange();
-           range.selectNode(password);
-           window.getSelection().addRange(range);
-
-           try {
-               // Now that we've selected the anchor text, execute the copy command  
-               var successful = document.execCommand('copy');
-               var msg = successful ? 'successful' : 'unsuccessful';
-               $('#message').html('password successful encrypted and stored. <br> password copied to clipboard')
-               console.log('Copy password command was ' + msg);
-           } catch (err) {
-               console.log('Oops, unable to copy');
-           }
-
-           // Remove the selections - NOTE: Should use   
-           // removeRange(range) when it is supported  
-           window.getSelection().removeAllRanges();
+           $('#message').html('Password successfuly encrypted and stored. <br> Password copied to clipboard!');
        });
 
    };
