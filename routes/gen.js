@@ -9,12 +9,16 @@ function gen (req, next) {
 	var min_length = 5;
 
 	var words = keyword.split();
+	
+	console.log('acquiring tagger');
 
 	var Tagger = require("./node-stanford-postagger/postagger").Tagger;
 	var tagger = new Tagger({
 	  port: "9000",
 	  host: "localhost"
 	});
+	
+	console.log('tagger aquired');	
 
 	url = url.replace(/^\w+:\/\//, "").replace(/\/.+$/,"");
 	var site = url;
@@ -25,7 +29,7 @@ function gen (req, next) {
 		site = url.split('.')[0];
 	}
 	
-
+	console.log('running POS tagger');
 	tagger.tag(phrase, function(err, resp) {
 	  if (err){
 	  	return console.error(err);
@@ -69,6 +73,7 @@ function gen (req, next) {
 	  	min_length: req.body.min_length,
 	  	digits: req.body.digits,
 	  	site: site,
+		keyword: keyword,
 	  	padding: 0,
 	  }
 
@@ -163,12 +168,20 @@ function shorten (word, p) {
 	p = Math.max(p,1);
 	//console.log(word);
 	if(word.toLowerCase() == opt.site.toLowerCase()){
-		//console.log("must not be null "+p + opt.site.toLowerCase());
+		console.log('shortening url: '+word); 
 		if (rand(p)){
 			//console.log("short: " +  word.slice(0, (1-p)*word.length)+'.')
 			return word.slice(0, Math.max(3, (1-p)*word.length))+'.'
 		}
 	}
+	if(word.toLowerCase() == opt.keyword.toLowerCase()){
+		console.log('shortening keyword: '+word); 
+		if (rand(p)){
+			//console.log("short: " +  word.slice(0, (1-p)*word.length)+'.')
+			return word.slice(0, Math.max(3, (1-p)*word.length))+'.'
+		}
+	}
+
 	for (var i = hyph.length - 1; i >= 0; i--) {
 		var hyphword = hyph[i].replace(/•/g,"").replace(/\W+/,"");
 	 	if ( hyphword.toLowerCase() == word.toLowerCase()){
