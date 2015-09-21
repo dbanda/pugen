@@ -1,54 +1,94 @@
 extends layout
 
 block content
-      script(src='//code.jquery.com/jquery-1.11.3.min.js')
-
-
-      h1= title
-      p Welcome to #{title}
-
-      .fb-like(data-share='true', data-width='450', data-show-faces='true')
-
-      fb:login-button(scope='email,public_key',auto_logout_link='true', onlogin='checkLoginState();')
-      #status
-
-
- 
-      .col-lg-6
-            .input-group
-                  //- span.input-group-btn @
-                  span.input-group-addon @
-                        //- button.btn.btn-default(type='button') Go!       
-                        
-                  input.form-control(type='text', placeholder='Search for...')
-                  span.input-group-btn
-                        button.btn.btn-default(type='button') Go!
-              
-                  span.input-group-addon @
-                        //- button.btn.btn-default(type='button') Go!       
-                        
-                  input.form-control(type='text', placeholder='Search for...')
-                  span.input-group-btn
-                        button.btn.btn-default(type='button') Go!
-
-
-      p site:
-            input#site(type="text", value="")
-
-      p key:
-            input#keyword(type="text", value="weeknd")
+      .container
             
-      p phrase:
-            input#phrase(type="text" , value="only loser go to school. I taught myself how to move.")
 
-      p length:
-            input#length(type="text", value="10")
 
-      p your password:
-            input#password(type="text", value="10")
-            button.copybtn.btn.btn-lg.btn-warning copy
-                  span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate reload
-            button(type='button', onClick="exec();") Accept Password!
+            h1= title
+            p Welcome to #{title}
+
+            #status
+
+
+       
+            .col-lg(style="padding-bottom:30px;")
+                  .row
+                        .input-group
+                              //- span.input-group-btn @
+                              .input-group-addon Site:
+                                    //- button.btn.btn-default(type='button') Go!       
+                                    
+                              input.form-control#site(type='text', placeholder='Search for...')
+                              //- span.input-group-btn
+                              //-       button.btn.btn-default(type='button') Go!
+                  .row
+                        .input-group  
+                              span.input-group-addon Keyword:
+                                    //- button.btn.btn-default(type='button') Go!       
+                                    
+                              input.form-control#keyword(type='text', placeholder='Search for...')
+                              //- span.input-group-btn
+                              //-       button.btn.btn-default(type='button') Go!
+
+                  .row
+                        .input-group  
+                              .input-group-addon Enter a personal phrase:
+                                    //- button.btn.btn-default(type='button') Go!       
+                                    
+                              input.form-control#phrase(type='text', placeholder='Search for...')
+                              //- span.input-group-btn
+                              //-       button.btn.btn-default(type='button') Go!
+                  .row
+                        .input-group  
+                              .input-group-addon Desired password length:
+                                    //- button.btn.btn-default(type='button') Go!       
+                                    
+                              input.form-control#length(type='text', placeholder='8')
+                              //- span.input-group-btn
+                              //-       button.btn.btn-default(type='button') Go!
+            .span
+            .col-lg
+                  .row
+                        .input-group(style="padding-bottom:50px;")
+                              //- span.input-group-btn @
+                              .input-group-addon Your Password is:
+                                    //- button.btn.btn-default(type='button') Go!       
+                                    
+                              input.form-control#password(type='text', placeholder='Search for...')
+                              span.input-group-btn
+
+                                    button.copybtn.btn.btn-default.btn-warning 
+                                          span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate reload
+                                    button.btn.btn-default.btn-danger(type='button', onClick="exec();") Accept Password!
+
+                                    //- button.btn.btn-default(type='button') Go!
+            
+            .fb-like(data-share='true', data-width='450', data-show-faces='true')
+
+            fb:login-button(scope='email,public_key',auto_logout_link='true', onlogin='checkLoginState();')
+
+
+
+            //- p site:
+            //-       input#site(type="text", value="")
+
+            //- p key:
+            //-       input#keyword(type="text", value="weeknd")
+                  
+            //- p phrase:
+            //-       input#phrase(type="text" , value="only loser go to school. I taught myself how to move.")
+
+            //- p length:
+            //-       input#length(type="text", value="10")
+
+            //- p your password:
+            //-       input#password(type="text", value="10")
+            //-       button.copybtn.btn.btn-lg.btn-warning copy
+            //-             span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate reload
+            //-       button(type='button', onClick="exec();") Accept Password!
+
+
       script(src='/javascripts/bootstrap.min.js')  
       script(src='/javascripts/index.js')
 
