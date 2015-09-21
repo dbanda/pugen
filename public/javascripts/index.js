@@ -98,7 +98,7 @@
        console.log("exec");
        $.ajax({
            type: "POST",
-           url: "/",
+           url: "",
            data: {
                phrase: $('#phrase').val(),
                keyword: $('#keyword').val(),
@@ -120,7 +120,7 @@
        console.log("accept");
        $.ajax({
            type: "POST",
-           url: "/accept",
+           url: "accept",
        }).done(function(data) {
            console.log("accept: " + data);
            $('#password').val(data);
