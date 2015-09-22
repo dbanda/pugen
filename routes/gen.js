@@ -1,6 +1,9 @@
 var fs = require('fs');
+var request = require("request");
 var hyph = fs.readFileSync('./routes/mhyph.UTF-8.txt').toString().split('\n');
 var opt;
+var svo_array =[];
+var goodwords =0;
 function gen (req, next) {
 	var phrase = req.body.phrase;
 	var keyword = req.body.keyword;
@@ -8,7 +11,7 @@ function gen (req, next) {
 	var max_length = 8;
 	var min_length = 5;
 
-	var words = keyword.split();
+	console.log("generating pword");
 
 	var Tagger = require("./node-stanford-postagger/postagger").Tagger;
 	var tagger = new Tagger({
@@ -65,8 +68,8 @@ function gen (req, next) {
 
 	  opt = {
 	  	p_rand: req.body.p_rand,
-	  	max_length: req.body.max_length,
-	  	min_length: req.body.min_length,
+	  	max_length: req.body.max_length || 15,
+	  	min_length: req.body.min_length || 8,
 	  	digits: req.body.digits,
 	  	site: site,
 	  	padding: 0,
@@ -76,12 +79,23 @@ function gen (req, next) {
 	  console.log("phrase: " + JSON.stringify(taggedPhrase));
 	  console.log("dict: "+ JSON.stringify(wordDict));
 	  console.log("opt: "+ JSON.stringify(opt));
-	  var svo_phrase = svo(tagset, wordDict,opt,0);
+	  svo(tagset, wordDict,opt,0,function function_name () {
+	  	// body...
+	  	svo_array = svo_array.sort(function(a,b){
+		  	return a.score-b.score;
+		  })
+
+	  	console.log("svo_array: " + JSON.stringify(svo_array));
+	  	var svo_phrase = svo_array[svo_array.length-1].pword; 
 
 
-	  console.log("svo: " + JSON.stringify(svo_phrase));
-	  
-	  next(svo_phrase);
+
+		  console.log("svo: " + JSON.stringify(svo_phrase));
+		  
+		  next(svo_phrase);
+	  });
+
+
 	});
 
 
@@ -107,7 +121,7 @@ function getWord (tagset, wordDict,type) {
 	// console.log("not subj " + type);
 	return "";
 }
-function svo (tagset, wordDict,opt,attempt) {
+function svo (tagset, wordDict,opt,attempt,next) {
 	var subj = getWord(tagset, wordDict,"subjects");
 	var verb = getWord(tagset, wordDict,"verbs");
 	var obj = getWord(tagset, wordDict,"subjects");
@@ -122,7 +136,7 @@ function svo (tagset, wordDict,opt,attempt) {
 
 	opt.padding = Math.floor((opt.max_length-opt.min_length)*attempt/100.0);
 	var short_prob = (0.4 + attempt/100.0) % 3.0;
-	//console.log(short_prob+ " attempt ", attempt);
+	// console.log(short_prob+ " attempt ", attempt);
 
 	var svo_string = swap(shorten(subj,short_prob),opt.p_rand);
 	// console.log("------------------------------------------")
@@ -131,12 +145,14 @@ function svo (tagset, wordDict,opt,attempt) {
 	for (var i = bag.length - 1; i >= 0; i--) {
 		var punc = "";
 		if (rand(0.5)){
-			var sigmoid = (2/(1+Math.exp(100*(i/bag.length-1))))-1;
-			p_num = 0.99*Math.max(sigmoid,1);
-			p_num = 0.99
+			//var sigmoid = (2/(1+Math.exp(100*((i-1)/bag.length-1))));
+			var sigmoid  = (2/(1+Math.exp(100*((i-1)/3))))
+			p_num = 0.99*Math.max(Math.min(sigmoid,1),0);
+			//p_num = 0.99
+			// console.log(p_num + "i: " + sigmoid + " "+rand(p_num));
 			if(svo_string.replace(/\D/g, "").length > opt.digits) p_num = 1; 
 			if(rand(p_num)) {punc = getWord(tagset, wordDict,"punc");}
-			else{punc = Math.floor(Math.random() * (10*opt.digits-10)) + 10}
+			else{punc = Math.floor(Math.random() * (10*opt.digits-10)) + 10	}
 		}else{
 			punc = ""; 
 		}
@@ -148,14 +164,28 @@ function svo (tagset, wordDict,opt,attempt) {
 		svo_string = svo_string+punc+ swap(shorten(bag[i], short_prob),opt.p_rand);
 		// console.log(svo_string);
 	};
-	if (attempt > 2000)return svo_string;
-	if (subj ==obj ||not_valid(svo_string,opt)) return svo(tagset, wordDict,opt,attempt+1);
-	return svo_string;
+	if (attempt > 2000){
+		// rhymeScore(svo_string,next);
+		next();
+		return
+	}
+
+	if (goodwords >= 10){return}
+
+	if (subj ==obj ||not_valid(svo_string,opt)) return svo(tagset, wordDict,opt,attempt+1,next);
+	console.log("gen candidate pword: " + svo_string);
+	rhymeScore(svo_string,next);
+	return svo(tagset, wordDict,opt,attempt-10,next)
 }
 function not_valid (str, opt) {
-	if(str.length < Math.max(opt.max_length-opt.padding,opt.min_length) || str.length > opt.max_length) return true;
+	
+	if(str.length < Math.max(opt.max_length-opt.padding,opt.min_length) || str.length > opt.max_length){
+		console.log(str+ "is too short " + Math.max(opt.max_length-opt.padding,opt.min_length) );
+		return true;
+	} 
 	if(str.replace(/\D/g, "").length < opt.digits) return true;
 	if(str.replace(/\D/g, "").length > opt.digits+2) return true;
+	return false
 
 }
 
@@ -222,4 +252,35 @@ function rand (p) {
 		return false;
 	}
 }
+
+function rhymeScore(pword,next) {
+	goodwords++
+	
+	word = pword.replace(/\d/g,"");
+   request("http://rhymebrain.com/talk?function=getRhymes&word=" + encodeURIComponent(word),
+   	         function(err, response, body) {
+   	         	if(err){console.error(err)}
+   	           data = JSON.parse(body);
+		       // console.log(" rhymebrain: " + JSON.stringify(data));
+		       console.log(word +" count:"+ data.length);
+		       var score = 0;
+
+		       for (var i = data.length - 1; i >= 0; i--) {
+		       	score += data[i].freq * data[i].score
+		       };
+		    
+		       console.log(word +" score: "+ score);
+		       bundle = {
+		       	pword: pword,
+		       	score: score
+		       }
+		       console.log("rhymescoring: " + pword);
+		       svo_array.push(bundle);
+		       if (svo_array.length >= 10){
+		       	next()
+		       }
+	});
+   return
+};
+
 module.exports = gen;
