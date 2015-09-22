@@ -16,7 +16,7 @@ router.post('/login', function(req, res, next) {
   //console.log(req.body);
 
   models.Users.findOne({'id' : req.body.id},function(err, user){
-  	console.log("searching" + req.body.id +err +user);
+  	//console.log("searching" + req.body.id +err +user);
   	if(user){
   		req.session.regenerate(function(err) {
   			// will have a new session here 
@@ -37,15 +37,13 @@ router.post('/login', function(req, res, next) {
   		res.send("err " + err );
   		return
   	}else{
-  		bcrypt.genSalt(10, function(err, salt) {
-  			var newUser = new models.Users({id: req.body.id, salt: salt, public_key:req.body.public_key })
-  	  		newUser.save(function(err, user){
+  			var newUser = new models.Users({id: req.body.id, public_key:req.body.public_key })
+  	  	newUser.save(function(err, user){
   	  			req.session.regenerate(function(err) {
   					// will have a new session here 
   					req.session.user = user;
   					res.json(user.id + " saved and session created");
   				})
-  			})
   		})
 
   	}

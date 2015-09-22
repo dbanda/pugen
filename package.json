@@ -19,6 +19,7 @@
     "rsa-json": "*",
     "bcrypt" :"*",
     "openpgp":"*",
-    "bootstrap": "*"
+    "bootstrap": "*",
+    "request" : "*"
   }
 }

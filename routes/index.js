@@ -26,7 +26,7 @@ router.post('/', function(req, res, next) {
         var length = 8;
         
 
-        
+        console.log("calling generator");
 
     	gen(req,function(pword) {
     		console.log("your new pword: "+ pword);
@@ -42,34 +42,40 @@ router.post('/', function(req, res, next) {
             }
     		res.json(pword);
     	});
-	}
-  //res.render('index', { title: 'Express' });
+	}else{
+    res.json('user not logged in');
+        
+    }
 });
 
 router.post('/accept' , function(req,res,next){
 	//console.log(JSON.stringify(req.session.user));
 	//console.log(JSON.stringify(req.session.user.public_key));
+    if (req.session.user.public_key && req.session.data){
+        var key = req.session.user.public_key.toString();
+        var publicKey = openpgp.key.readArmored(key);
+        console.log(JSON.stringify(publicKey));
+        var msg = JSON.stringify(req.session.data)
+        openpgp.encryptMessage(publicKey.keys, msg).then(function(pgpMessage) {
+            // success
+            var newPword = new models.Pwords({userid: user.id, 
+                                            phrase: req.session.phrase,
+                                            site: req.session.site,
+                                            time: Date.now(),
+                                            encrypted_password: pgpMessage})
+            
+            newPword.save(function(err, user){
+                console.log('encyption complete');
+                res.json(req.session.data.password);
 
-	var key = req.session.user.public_key.toString();
-	var publicKey = openpgp.key.readArmored(key);
-	//console.log(JSON.stringify(publicKey));
-    var msg = JSON.stringify(req.session.data)
-	openpgp.encryptMessage(publicKey.keys, msg).then(function(pgpMessage) {
-	    // success
-        var newPword = new models.Pwords({userid: user.id, 
-                                        phrase: req.session.phrase,
-                                        site: req.session.site,
-        								time: Date.now(),
-        								encrypted_password: pgpMessage})
-		
-		newPword.save(function(err, user){
-            console.log('encyption complete');
-			res.json(req.session.data.password);
+            })
+        }).catch(function(error) {
+            // failure
+            console.error(error);
+        });
+    }else{
+        res.render('index', { title: 'Express' });
+    }
 
-		})
-	}).catch(function(error) {
-	    // failure
-	    console.error(error);
-	});
 })
 module.exports = router;
