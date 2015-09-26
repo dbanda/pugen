@@ -140,7 +140,7 @@ function svo (tagset, wordDict,opt,attempt,next) {
 
 	opt.padding = Math.floor((opt.max_length-opt.min_length)*attempt/100.0);
 	var short_prob = (0.4 + attempt/100.0) % 3.0;
-	// console.log(short_prob+ " attempt ", attempt);
+	console.log(short_prob+ " attempt ", attempt);
 
 	var svo_string = swap(shorten(subj,short_prob),opt.p_rand);
 	// console.log("------------------------------------------")
@@ -267,13 +267,13 @@ function rand (p) {
 
 function rhymeScore(pword,next) {
 	goodwords++
-	
+	console.log("rhyme scoring");	
 	word = pword.replace(/\d/g,"");
    request("http://rhymebrain.com/talk?function=getRhymes&word=" + encodeURIComponent(word),
    	         function(err, response, body) {
    	         	if(err){console.error(err)}
    	           data = JSON.parse(body);
-		       // console.log(" rhymebrain: " + JSON.stringify(data));
+		       console.log(" rhymebrain: " + JSON.stringify(data));
 		       console.log(word +" count:"+ data.length);
 		       var score = 0;
 
