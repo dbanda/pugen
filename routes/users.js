@@ -9,11 +9,11 @@ var bcrypt = require('bcrypt');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
+  console.log("get users");
   res.send('respond with a resource');
 });
 
 router.post('/login', function(req, res, next) {
-  //console.log(req.body);
 
   models.Users.findOne({'id' : req.body.id},function(err, user){
   	//console.log("searching" + req.body.id +err +user);
