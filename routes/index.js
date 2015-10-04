@@ -6,6 +6,7 @@ var models = require('./models');
 var createKeys = require('rsa-json');
 var bcrypt = require('bcrypt');
 var gen = require('./gen')
+var gen_domain = require('./gen-domain')
 var openpgp = require('openpgp');
 var fs = require('fs');
 
@@ -13,6 +14,22 @@ var fs = require('fs');
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
+
+/* GET home page. */
+router.get('/domain', function(req, res, next) {
+  res.render('domain', { title: 'Express' });
+});
+
+router.post('/domain', function function_name (req, res,next) {
+    // body...
+    req.body.keyword = "";
+    req.body.site = "";
+
+    gen_domain(req,function(pword) {
+            console.log("your new pword: "+ pword);
+            res.json(pword);
+        });
+})
 
 router.post('/', function(req, res, next) {
 	if (req.session.user){
