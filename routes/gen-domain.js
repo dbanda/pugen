@@ -168,12 +168,16 @@ function svo (tagset, wordDict,opt,attempt,next) {
 		return
 	}
 
+	if (attempt > 650 && svo_string == ""){
+		console.log("maximum calls made. returning whatever i have");
+		res.json("hmm.. Sorry I can't find an answer");
+		return
+	}
+
 	if (goodwords >= 10){
 		console.log("enough words found!");
 		rhymeScore(svo_string,next);
 		return
-		//next();
-		//return
 	}
 
 	if (attempt < 200){

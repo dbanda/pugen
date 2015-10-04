@@ -24,6 +24,10 @@ router.post('/domain', function function_name (req, res,next) {
     // body...
     req.body.keyword = "";
     req.body.site = "";
+    if(req.body.phrase == ""){
+        res.json("phrase is empty!")
+        return
+    }
 
     gen_domain(req,function(pword) {
             console.log("your new pword: "+ pword);
