@@ -131,7 +131,7 @@ function svo (tagset, wordDict,opt,attempt,next) {
 		adverb = ""
 	}
 
-	opt.padding = Math.floor((opt.max_length-opt.min_length)*Math.max(1-attempt/100.0,0));
+	opt.padding = Math.floor((opt.max_length-opt.min_length)*Math.min(attempt/100.0,1));
 	var short_prob = attempt/100
 	// console.log(short_prob+ " attempt ", attempt);
 
