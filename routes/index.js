@@ -89,7 +89,7 @@ router.post('/', function(req, res, next) {
                 password_length: length,
                 password: pword,
                 time: Date.now(),
-                user: JSON.stringify(user)
+                user: user.id
             }
             res.json(pword);
         });
