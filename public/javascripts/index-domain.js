@@ -105,7 +105,7 @@
                 site: $('#site').val(),
                 p_rand: 0.1,
                 max_length: $('#length').val(),
-                min_length: 8,
+                min_length: 3,
                 digits: 2
             }
         }).done(function(data) {
@@ -128,16 +128,6 @@
         });
 
     };
-    var retrieveBtn = $('.retrieveBtn');
-    retrieveBtn.click(function(argument) {
-        console.log("retriving");
-        $.ajax({
-            type: "GET",
-            url: "retrieve",
-        }).done(function(data) {
-            console.log(data);
-        })
-    })
 
     var reloadBtn = $('.reloadBtn');
     reloadBtn.click(function(event) {
