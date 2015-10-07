@@ -18,7 +18,6 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/retrieve', function(req, res, next) {
-    // body...
     if (req.session.user) {
         var user = req.session.user;
         response = {};
@@ -29,7 +28,16 @@ router.get('/retrieve', function(req, res, next) {
                 pwords.forEach(function(pword) {
                     response[pword.site] = pword.encrypted_password
                 })
-                res.json(response)
+                fs.writeFile("passwords.msg", response, function(err) {
+                    if(err){
+                        console.log(err)
+                    }
+                    else{
+                        res.download("passwords.msg");
+                    }
+                    
+                })
+                
             })
     } else {
         res.json('user not logged in');
@@ -103,8 +111,8 @@ router.post('/accept', function(req, res, next) {
             // success
             var newPword = new models.Pwords({
                 userid: user.id,
-                phrase: req.session.phrase,
-                site: req.session.site,
+                phrase: req.session.data.phrase,
+                site: req.session.data.site,
                 time: Date.now(),
                 encrypted_password: pgpMessage
             })
