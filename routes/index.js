@@ -30,8 +30,9 @@ router.get('/retrieve', function(req, res, next) {
             })
 
             var data = JSON.stringify(response)
-            console.log("writing passwords to file:  " + data);
+
             fs.writeFile("passwords.txt", data, function(err) {
+                console.log("writing passwords to file:  ");
                 if (err) {
                     console.log(err)
                 }
