@@ -20,7 +20,7 @@ a {
 }
 
 body {
-	font-family: 'dbscriptmedium';
+    /*font-family: 'dbscriptmedium';*/
     font-variant: small-caps;
     font-weight: 200;
     padding-top: 40px;
