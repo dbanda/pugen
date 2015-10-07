@@ -108,7 +108,7 @@ router.post('/accept', function(req, res, next) {
         var publicKey = openpgp.key.readArmored(key);
         var user = req.session.user;
         //console.log(JSON.stringify(publicKey));
-        //var msg = JSON.stringify(req.session.data)
+        var msg = JSON.stringify(req.session.data)
         openpgp.encryptMessage(publicKey.keys, msg).then(function(pgpMessage) {
             // success
             var newPword = new models.Pwords({
