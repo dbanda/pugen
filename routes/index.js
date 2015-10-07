@@ -14,10 +14,18 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+router.get('/retrieve' , function (req, res, next) {
+    // body...
+    if (req.session.user){
+
+    }else{
+        res.json('user not logged in');
+    }
+})
 router.post('/', function(req, res, next) {
 	if (req.session.user){
 
-		user =req.session.user;
+		var user =req.session.user;
 		var salt = user.salt;
 
 		var phrase = req.body.phrase;
@@ -43,8 +51,7 @@ router.post('/', function(req, res, next) {
     		res.json(pword);
     	});
 	}else{
-    res.json('user not logged in');
-        
+        res.json('user not logged in');
     }
 });
 
