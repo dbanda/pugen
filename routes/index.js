@@ -28,16 +28,15 @@ router.get('/retrieve', function(req, res, next) {
                 pwords.forEach(function(pword) {
                     response[pword.site] = pword.encrypted_password
                 })
-                fs.writeFile("passwords.msg", response, function(err) {
-                    if(err){
+                fs.writeFile("passwords.txt", response, function(err) {
+                    if (err) {
                         console.log(err)
+                    } else {
+                        res.download("passwords.txt");
                     }
-                    else{
-                        res.download("passwords.msg");
-                    }
-                    
+
                 })
-                
+
             })
     } else {
         res.json('user not logged in');
