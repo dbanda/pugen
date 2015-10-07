@@ -128,16 +128,19 @@
         });
 
     };
-    // var retrieveBtn = $('.retrieveBtn');
-    // retrieveBtn.click(function(argument) {
-    //     console.log("retriving");
-    //     $.ajax({
-    //         type: "GET",
-    //         url: "retrieve",
-    //     }).done(function(data) {
-    //         console.log(data);
-    //     })
-    // })
+    var retrieveBtn = $('.retrieveBtn');
+    retrieveBtn.click(function(argument) {
+        console.log("retriving");
+        window.location.href = 'retrieve'
+        // $.ajax({
+            //     type: "GET",
+            //     url: "retrieve",
+            // }).done(function(data) {
+            //     console.log(data);
+            // })
+
+    })
+
 
     var reloadBtn = $('.reloadBtn');
     reloadBtn.click(function(event) {
