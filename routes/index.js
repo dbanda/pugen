@@ -21,25 +21,25 @@ router.get('/retrieve', function(req, res, next) {
     if (req.session.user) {
         var user = req.session.user;
         response = {};
-        var email =
-            models.Pwords.find({
-                'userid': user.id
-            }, function(err, pwords) {
-                pwords.forEach(function(pword) {
-                    response[pword.site] = pword.encrypted_password
-                })
-                console.log("writing passwords to file");
-                var data = JSON.stringify(response)
-                fs.writeFile("passwords.txt", data, function(err) {
-                    if (err) {
-                        console.log(err)
-                    } else {
-                        res.download("passwords.txt");
-                    }
 
-                })
+        models.Pwords.find({
+            'userid': user.id
+        }, function(err, pwords) {
+            pwords.forEach(function(pword) {
+                response[pword.site] = pword.encrypted_password
+            })
+            console.log("writing passwords to file");
+            var data = JSON.stringify(response)
+            fs.writeFile("passwords.txt", data, function(err) {
+                if (err) {
+                    console.log(err)
+                } else {
+                    res.download("passwords.txt");
+                }
 
             })
+
+        })
     } else {
         res.json('user not logged in');
     }
