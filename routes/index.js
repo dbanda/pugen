@@ -29,9 +29,7 @@ router.get('/retrieve', function(req, res, next) {
                 response = response + pword.site + '\n' + pword.encrypted_password + '\n\n';
             })
 
-            var data = "" + JSON.stringify(response)
-
-            fs.writeFile("passwords.txt", data, function(err) {
+            fs.writeFile("passwords.txt", response, function(err) {
                 console.log("writing passwords to file:  ");
                 if (err) {
                     console.log(err)
