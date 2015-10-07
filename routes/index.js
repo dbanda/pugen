@@ -20,13 +20,13 @@ router.get('/', function(req, res, next) {
 router.get('/retrieve', function(req, res, next) {
     if (req.session.user) {
         var user = req.session.user;
-        response = {};
+        var response = "";
 
         models.Pwords.find({
             'userid': user.id
         }, function(err, pwords) {
             pwords.forEach(function(pword) {
-                response[pword.site] = pword.encrypted_password
+                response = response + pword.site + '\n' + pword.encrypted_password + '\n\n';
             })
 
             var data = "" + JSON.stringify(response)
