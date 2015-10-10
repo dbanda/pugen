@@ -104,8 +104,8 @@
                 keyword: $('#keyword').val(),
                 site: $('#site').val(),
                 p_rand: 0.1,
-                max_length: $('#length').val(),
-                min_length: 3,
+                min_length: $('#length').val(),
+                max_length: 15,
                 digits: 2
             }
         }).done(function(data) {

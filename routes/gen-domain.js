@@ -11,8 +11,6 @@ function gen(req, next) {
     var phrase = req.body.phrase;
     var keyword = req.body.keyword;
     var url = req.body.site;
-    var max_length = 8;
-    var min_length = 5;
 
     // console.log("generating pword");
 
@@ -62,7 +60,7 @@ function gen(req, next) {
         opt = {
             p_rand: req.body.p_rand,
             max_length: req.body.max_length || 15,
-            min_length: 3,
+            min_length: req.body.min_length,
             digits: 0,
             site: "",
             keyword: keyword,
@@ -135,7 +133,7 @@ function svo(tagset, wordDict, opt, attempt, next) {
     }
 
     opt.padding = Math.floor((opt.max_length - opt.min_length) * Math.min(attempt / 100.0, 1));
-    var short_prob = attempt / 100
+    var short_prob = (attempt % 10) / 10.0
         // console.log(short_prob+ " attempt ", attempt);
 
     var svo_string = shorten(subj, short_prob);
@@ -180,11 +178,7 @@ function svo(tagset, wordDict, opt, attempt, next) {
         return
     }
 
-    if (goodwords >= 10) {
-        console.log("enough words found!");
-        rhymeScore(svo_string, next);
-        return
-    }
+
 
     if (attempt < 200) {
         if (subj == obj || not_valid(svo_string, opt)) return svo(tagset, wordDict, opt, ++attempt, next);
@@ -193,6 +187,11 @@ function svo(tagset, wordDict, opt, attempt, next) {
     }
 
     // console.log("gen candidate pword: " + svo_string);
+    if (goodwords >= 100) {
+        console.log("enough words found!");
+        rhymeScore(svo_string, next);
+        return
+    }
     rhymeScore(svo_string, function() {});
     return svo(tagset, wordDict, opt, attempt - 10, next)
 }
@@ -203,6 +202,7 @@ function not_valid(str, opt) {
         console.log(str + "is too short " + Math.max(opt.max_length - opt.padding, opt.min_length));
         return true;
     }
+    console.log(str + " :good " + Math.max(opt.max_length - opt.padding, opt.min_length));
     return false
 
 }
@@ -273,7 +273,7 @@ function rand(p) {
 
 function rhymeScore(pword, next) {
 
-    // console.log("rhyme scoring: " + pword);	
+    // console.log("rhyme scoring: " + pword);  
     word = pword.replace(/\d/g, "");
     goodwords++
     request("http://rhymebrain.com/talk?function=getRhymes&word=" + encodeURIComponent(word),
@@ -290,12 +290,21 @@ function rhymeScore(pword, next) {
             };
 
             // console.log(word +" score: "+ score);
+
             bundle = {
                     pword: pword,
                     score: score
                 }
                 // console.log("rhymescoring: " + pword);
+            for (var i = svo_array.length - 1; i >= 0; i--) {
+                if (svo_array[i].pword == bundle.pword) {
+                    next();
+                    return
+                }
+            };
             svo_array.push(bundle);
+
+
 
             next()
         });
