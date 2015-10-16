@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>pugen</title>
+    <link rel="stylesheet" href="./stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="./stylesheets/style.css">
+    <script src="./javascripts/jquery-1.11.3.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="center">PUGEN</h1>
+        <p class="center">Generate passwords that you can remember</p>
+        <div id="status"></div>
+        <div style="padding-bottom:30px;" class="col-lg">
+            <div class="row">
+                <div class="input-group">
+                    <div class="input-group-addon">Site:</div>
+                    <input id="site" type="text" placeholder="site" class="form-control">
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-group">
+                    <div class="input-group-addon">Keyword:</div>
+                    <input id="keyword" type="password" placeholder="A secret keyword" class="form-control">
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-group">
+                    <div class="input-group-addon">Phrase:</div>
+                    <input id="phrase" type="text" placeholder="A memorable phrase" class="form-control">
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-group">
+                    <div class="input-group-addon">length:</div>
+                    <input id="length" type="text" placeholder="Desired password length" class="form-control">
+                </div>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="row">
+                <div style="padding-bottom:50px;" class="input-group">
+                    <div class="input-group-addon">Password:</div>
+                    <input id="password" type="text" placeholder="Memorable generated password" class="form-control readOnly"><span class="input-group-btn"><button class="reloadBtn btn btn-default btn-warning"><span class="glyphicon glyphicon-refresh"></span></button>
+                    <button type="button" class="acceptbtn btn btn-default btn-danger">Accept!</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div id="message"></div>
+        <div data-share="true" data-width="450" data-show-faces="false" class="fb-like"></div>
+        <div data-max-rows="1" data-size="small" data-show-faces="false" auto_logout_link="true" class="fb-login-button"> </div>
+        <button type="button" class="retrieveBtn btn btn-default btn-danger">retrive!</button>
+        <br>
+        <!--a.coinbase-button(data-code='be4c3583eef3e0105d059d6675c53652', data-button-style='custom_small', href='https://www.coinbase.com/checkouts/be4c3583eef3e0105d059d6675c53652') Donate Bitcoinsscript(src='https://www.coinbase.com/assets/button.js', type='text/javascript')
+
+-->
+    </div>
+    <script src="./javascripts/bootstrap.min.js"></script>
+    <script src="./javascripts/popup.js"></script>
+    <script src="./javascripts/index.js"></script>
+</body>
+
+</html>

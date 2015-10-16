@@ -1,0 +1,72 @@
+/*body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+*/
+@font-face {
+    font-family: 'dbscriptmedium';
+    src: url('dbscript-fin-webfont.eot');
+    src: url('dbscript-fin-webfont.eot?#iefix') format('embedded-opentype'),
+         url('dbscript-fin-webfont.woff') format('woff'),
+         url('dbscript-fin-webfont.ttf') format('truetype'),
+         url('dbscript-fin-webfont.svg#dbscriptmedium') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+a {
+  color: #00B7FF;
+}
+
+body {
+	/*font-family: 'dbscriptmedium';*/
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #333;
+    background-color: #fff;
+
+    font-variant: small-caps;
+    font-weight: 200;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    background-color: #eee;
+    font-size: 30px;
+}
+
+.input-group{
+	padding-bottom: 5px;
+	width: 900px;
+}
+div.input-group-addon{
+	width: 200px;
+	font-size: 30px;
+	font-weight: 550;
+}
+
+.form-control {
+	position: relative;
+	height: auto;
+	-webkit-box-sizing: border-box;
+	 -moz-box-sizing: border-box;
+	      box-sizing: border-box;
+	font-size: 30px;
+}
+
+.btn {
+	font-size: 30px;
+}
+.glyphicon-refresh{
+	font-size: 90%;
+}
+
+.glyphicon-refresh-animate {
+    -animation: spin .7s infinite linear;
+    -webkit-animation: spin2 .7s infinite linear;
+}
+
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg);}
+    to { -webkit-transform: rotate(360deg);}
+}
