@@ -13,7 +13,9 @@
         "activeTab",
         "https://ajax.googleapis.com/",
         "identity",
-        "<all_urls>"
+        "<all_urls>",
+        "downloads",
+        "identity.email"
     ],
     "oauth2": {
         "client_id": "437268999325-qshol3t4at3nk8mplut94jo6bv8vc17a.apps.googleusercontent.com",

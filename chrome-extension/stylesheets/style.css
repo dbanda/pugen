@@ -3,56 +3,56 @@
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 */
+
 @font-face {
     font-family: 'dbscriptmedium';
     src: url('dbscript-fin-webfont.eot');
-    src: url('dbscript-fin-webfont.eot?#iefix') format('embedded-opentype'),
-         url('dbscript-fin-webfont.woff') format('woff'),
-         url('dbscript-fin-webfont.ttf') format('truetype'),
-         url('dbscript-fin-webfont.svg#dbscriptmedium') format('svg');
+    src: url('dbscript-fin-webfont.eot?#iefix') format('embedded-opentype'), url('dbscript-fin-webfont.woff') format('woff'), url('dbscript-fin-webfont.ttf') format('truetype'), url('dbscript-fin-webfont.svg#dbscriptmedium') format('svg');
     font-weight: normal;
     font-style: normal;
-
 }
 
 a {
-  color: #00B7FF;
+    color: #00B7FF;
 }
 
 body {
     /*font-family: 'dbscriptmedium';*/
     font-variant: small-caps;
-    font-weight: 200;
-    padding-top: 40px;
-    padding-bottom: 40px;
-    background-color: #eee;
-    font-size: 30px;
+    /* font-weight: 200; */
+    /* padding-top: 40px; */
+    /* padding-bottom: 40px; */
+    /* background-color: #eee; */
+    /* font-size: 30px; */
 }
 
-.input-group{
-	padding-bottom: 5px;
-	width: 900px;
+.input-group {
+    padding-bottom: 5px;
+    width: 500px;
 }
-div.input-group-addon{
-	width: 200px;
-	font-size: 30px;
-	font-weight: 550;
+
+div.input-group-addon {
+    width: 100px;
+    font-size: 15px;
+    font-weight: 650;
+    text-align: left;
 }
 
 .form-control {
-	position: relative;
-	height: auto;
-	-webkit-box-sizing: border-box;
-	 -moz-box-sizing: border-box;
-	      box-sizing: border-box;
-	font-size: 30px;
+    position: relative;
+    height: auto;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    font-size: 15px;
 }
 
 .btn {
-	font-size: 30px;
+    font-size: 15px;
 }
-.glyphicon-refresh{
-	font-size: 90%;
+
+.glyphicon-refresh {
+    font-size: 90%;
 }
 
 .glyphicon-refresh-animate {
@@ -61,6 +61,51 @@ div.input-group-addon{
 }
 
 @-webkit-keyframes spin2 {
-    from { -webkit-transform: rotate(0deg);}
-    to { -webkit-transform: rotate(360deg);}
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+.scrollable-menu {
+    height: auto;
+    /*max-height: 180px;
+*/
+    overflow-x: hidden;
+}
+
+.scrollable-menu::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 4px;
+}
+
+.scrollable-menu::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background-color: lightgray;
+    -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .75);
+}
+
+.activeretrivelist {
+    display: block;
+    width: 200px;
+}
+
+.retrievelist {
+    top: 0;
+    right: 0;
+    left: auto;
+    bottom: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.openlist {
+    margin-right: 200px;
+}
+
+.block {
+    display: block;
 }

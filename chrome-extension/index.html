@@ -9,13 +9,30 @@
 </head>
 
 <body>
+    <ul class="retrievelist dropdown-menu scrollable-menu" style=" top:0; right:0; left:auto" role="menu">
+        <li><a href="#">Action</a></li>
+        <li><a href="#">Another action</a></li>
+        <li><a href="#">Something else here</a></li>
+        <li><a href="#">Action</a></li>
+        <li><a href="#">Another action</a></li>
+        <li><a href="#">Something else here</a></li>
+        <li><a href="#">Action</a></li>
+        <li><a href="#">Another action</a></li>
+        <li><a href="#">Something else here</a></li>
+        <li><a href="#">Action</a></li>
+        <li><a href="#">Another action</a></li>
+        <li><a href="#">Something else here</a></li>
+        <li><a href="#">Action</a></li>
+        <li><a href="#">Another action</a></li>
+    </ul>
     <div class="container">
         <h1 class="center">PUGEN</h1>
         <p class="center">Generate passwords that you can remember</p>
         <div id="status"></div>
-        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-            Launch demo modal
-        </button>
+        <!-- <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+    Launch demo modal
+</button>
+ -->
         <!-- Modal -->
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
             <div class="modal-dialog" role="document">
@@ -25,7 +42,7 @@
                         <h4 class="modal-title" id="myModalLabel">Modal title</h4>
                     </div>
                     <div class="modal-body">
-                        <form>
+                        <!--                         <form>
                             <textarea name="pgpTextArea" id="pgpTextArea" class="form-control" rows="3"></textarea>
                             <div class="form-group">
                                 <label for="exampleInputFile">File input</label>
@@ -35,7 +52,7 @@
                             <button id="submitlogin" type="button" class="btn btn-default">Submit</button>
                         </form>
                         <a href="https://www.facebook.com/dialog/oauth?client_id=814216818699536&redirect_uri=http://localhost:3000/fblogin">login</a>
-                        <progress></progress>
+                        <progress></progress> -->
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -66,7 +83,7 @@
             <div class="row">
                 <div class="input-group">
                     <div class="input-group-addon">length:</div>
-                    <input id="length" type="text" placeholder="Desired password length" class="form-control">
+                    <input id="length" type="text" placeholder="Desired password length. Default is 8" class="form-control">
                 </div>
             </div>
         </div>

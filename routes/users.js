@@ -6,10 +6,12 @@ var db = mongoose.connection;
 var models = require('./models');
 // var createKeys = require('rsa-json');
 var bcrypt = require('bcrypt');
-var multer = require('multer')
+var multer = require('multer');
+var https = require('https');
 var upload = multer({
     dest: 'uploads/'
 })
+
 
 // router.use(upload.single('avatar'));
 
@@ -19,30 +21,27 @@ router.get('/', function(req, res, next) {
     res.send('respond with a resource');
 });
 
-router.get('/fblogin', function(req, ret, next) {
+router.get('/fblogin', function(request, ret, next) {
 
-    https.get("https://graph.facebook.com/v2.3/oauth/access_token?client_id=814216818699536&redirect_uri=http://localhost:3000/fblogin&client_secret=37f2fcfafed8cc314744068ac148bc78&code=" + req.query.code, function(res) {
+    https.get("https://graph.facebook.com/v2.3/oauth/access_token?client_id=814216818699536&redirect_uri=http://localhost:3000/users/fblogin&client_secret=37f2fcfafed8cc314744068ac148bc78&code=" + request.query.code, function(res) {
         console.log("Got response: " + res.statusCode);
         res.on('data', function(d) {
-            access_token = JSON.parse(d.toString());
-            https.get("https://graph.facebook.com/me?fields=id,public_key&access_token=" + access_token.access_token, function(res) {
+            var access_token = JSON.parse(d.toString());
+            console.log("Got access_token " + d.toString());
+            https.get("https://graph.facebook.com/me?fields=name,id,public_key&access_token=" + access_token.access_token, function(res) {
                 console.log("Got response: " + res);
-                var body
+                var body = "";
                 res.on('data', function(d) {
                     body += d
                 });
 
                 res.on('end', function(d) {
-                    data = JSON.parse(body.toString());
-                    ret.json(body)
-                    var req = {
-                        body: {
-                            id: data.id,
-                            public_key: data.public_key
-                        }
-                    }
+                    var data = JSON.parse(body.toString());
+                    request.body.id = data.id;
+                    request.body.public_key = data.public_key;
+                    request.body.name = data.name;
 
-                    login(req, ret)
+                    login(request, ret);
                 });
 
             }).on('error', function(e) {
@@ -64,6 +63,7 @@ router.post('/login', upload.single('file'), function(req, res, next) {
 
 function login(req, res) {
     // body...
+    console.log("req" + req);
     models.Users.findOne({
         'id': req.body.id
     }, function(err, user) {
@@ -73,7 +73,12 @@ function login(req, res) {
                     // will have a new session here 
                     req.session.user = user;
                     console.log("regenerated session");
-                    res.json("user logged in" + JSON.stringify(req.file) + JSON.stringify(req.files) + req)
+                    res.json({
+                        msg: "user logged in succesfuly",
+                        id: user.id,
+                        name: req.body.name,
+                        session: true
+                    });
                 })
                 // createKeys(function(err,pair){
                 //  req.session.server_public_key = pair.public;
@@ -96,9 +101,20 @@ function login(req, res) {
                     req.session.regenerate(function(err) {
                         // will have a new session here 
                         req.session.user = user;
-                        res.json(user.id + " saved and session created");
+                        res.json({
+                            msg: "create user succesfuly",
+                            id: user.id,
+                            session: true,
+                            created: true
+                        });
                     })
                 })
+            } else {
+                res.json({
+                    msg: "failed to login",
+                    session: false,
+                    created: false
+                });
             }
         }
     })

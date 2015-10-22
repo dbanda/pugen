@@ -99,7 +99,7 @@ function exec() {
     console.log("exec");
     $.ajax({
         type: "POST",
-        url: "",
+        url: "http://localhost:3000",
         data: {
             phrase: $('#phrase').val(),
             keyword: $('#keyword').val(),
@@ -117,16 +117,21 @@ function exec() {
     })
 }
 
-function submitLogin() {
+function submitLogin(chromeData) {
     console.log("submit login");
-    alert("submited");
     var formData = new FormData($('form')[0]);
 
     $.ajax({
             type: "GET",
-            url: "https://www.facebook.com/dialog/oauth?client_id=814216818699536&redirect_uri=http://localhost:3000/fblogin",
+            url: "https://www.facebook.com/dialog/oauth?client_id=814216818699536&redirect_uri=http://localhost:3000/users/fblogin",
         }).done(function(data) {
-            alert(JSON.stringify(data));
+            //alert(JSON.stringify(data));
+            if (data.session) {
+                $('#status').html(
+                    'Thanks for logging in, ' + data.name + '!')
+            } else {
+                $('myModel').addClass("block");
+            }
         })
         // $.ajax({
         //     type: "POST",
@@ -167,7 +172,7 @@ function accept() {
     console.log("accept");
     $.ajax({
         type: "POST",
-        url: "accept",
+        url: "http://localhost:3000/accept",
     }).done(function(data) {
         console.log("accept: " + data);
         $('#password').val(data);
@@ -179,14 +184,43 @@ function accept() {
 
 var retrieveBtn = $('.retrieveBtn');
 retrieveBtn.click(function(argument) {
-    console.log("retriving");
-    window.location.href = 'retrieve'
-        // $.ajax({
-        //     type: "GET",
-        //     url: "retrieve",
-        // }).done(function(data) {
-        //     console.log(data);
-        // })
+    alert("retriving");
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:3000/retrieve",
+    }).done(function(data) {
+        var list = $(".retrievelist");
+        list.addClass("activeretrivelist");
+        $(".container").addClass("openlist");
+        if (data.success) {
+            for (var i = data.arr.length - 1; i >= 0; i--) {
+                site = data.arr[i];
+                var li = $('<li/>')
+                    .appendTo(list)
+                var a = $('<a/>')
+                    .attr('href', '#')
+                    .html(site)
+                    .appendTo(li);
+                a.click(function(arg) {
+                    chrome.downloads.download({
+                        url: "http://localhost:3000/retrieve/" + site
+                    });
+                    $.ajax({
+                        type: "GET",
+                        url: "http://localhost:3000/retrieve/" + site,
+                    }).done(function(data) {
+                        alert(data);
+                        list.removeClass("activeretrivelist");
+                        $(".container").removeClass("openlist");
+                    })
+                })
+            };
+        }
+
+        alert(data);
+        console.log(data);
+    })
+
 
 })
 
@@ -236,8 +270,8 @@ chrome.identity.getAuthToken({
     'interactive': true
 }, function(token) {
     // Use the token.
+    chrome.identity.getProfileUserInfo(function(data) {
+        alert(JSON.stringify(arg));
+        submitLogin(data);
+    })
 });
-
-chrome.identity.getProfileUserInfo(function(data) {
-    alert(JSON.stringify(data));
-})

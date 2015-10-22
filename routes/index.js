@@ -1,3 +1,4 @@
+'use strict'
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
@@ -18,35 +19,8 @@ router.get('/', function(req, res, next) {
     });
 });
 
-router.get('/fblogin', function(req, ret, next) {
 
-    https.get("https://graph.facebook.com/v2.3/oauth/access_token?client_id=814216818699536&redirect_uri=http://localhost:3000/fblogin&client_secret=37f2fcfafed8cc314744068ac148bc78&code=" + req.query.code, function(res) {
-        console.log("Got response: " + res.statusCode);
-        res.on('data', function(d) {
-            access_token = JSON.parse(d.toString());
-            https.get("https://graph.facebook.com/me?fields=public_key&access_token=" + access_token.access_token, function(res) {
-                console.log("Got response: " + res);
-                var body
-                res.on('data', function(d) {
-                    body += d
-                });
-
-                res.on('end', function(d) {
-                    body = body.toString();
-                    ret.json(body)
-                });
-
-            }).on('error', function(e) {
-                console.log("Got error: " + e.message);
-            });
-        });
-    }).on('error', function(e) {
-        console.log("Got error: " + e.message);
-    });
-
-});
-
-router.get('/retrieve', function(req, res, next) {
+router.get('/retrieveall', function(req, res, next) {
     if (req.session.user) {
         var user = req.session.user;
         var response = "";
@@ -65,8 +39,70 @@ router.get('/retrieve', function(req, res, next) {
                 }
                 res.download("passwords.txt");
             })
-
         })
+    } else {
+        res.json('user not logged in');
+    }
+})
+
+router.get('/retrieve', function(req, res, next) {
+    if (req.session.user) {
+        var user = req.session.user;
+        var response = "";
+
+        models.Pwords.find({
+            'userid': user.id
+        }, function(err, pwords) {
+
+            if (err) {
+                console.log(err);
+                res.json(err);
+            }
+            var arr = []
+            pwords.forEach(function(pword) {
+                arr.push(pword.site)
+            })
+            var data = {
+                arr: ["www.google.com", "bing.com"],
+                success: true
+            }
+            res.json(data);
+        });
+
+    } else {
+        res.json('user not logged in');
+    }
+})
+
+router.get('/retrieve/:site', function(req, res, next) {
+    if (req.session.user) {
+        var user = req.session.user;
+        var response = "";
+        var site = req.params.site;
+
+        models.Pwords.find({
+            'userid': user.id,
+            'site': site
+        }, function(err, pwords) {
+
+            if (err) {
+                console.log(err);
+                res.json(err);
+            }
+            var response = "";
+            pwords.forEach(function(pword) {
+                response = response + '\n' + pword.encrypted_password + '\n\n';
+            })
+
+            fs.writeFile("passwords.txt", "response", function(err) {
+                console.log("writing passwords to file:  ");
+                if (err) {
+                    console.log(err)
+                }
+                res.download("passwords.txt");
+            })
+        });
+
     } else {
         res.json('user not logged in');
     }
