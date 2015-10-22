@@ -99,7 +99,7 @@ function exec() {
     console.log("exec");
     $.ajax({
         type: "POST",
-        url: "http://localhost:3000",
+        url: "http://dalitsob.com/pugen",
         data: {
             phrase: $('#phrase').val(),
             keyword: $('#keyword').val(),
@@ -123,19 +123,21 @@ function submitLogin(chromeData) {
 
     $.ajax({
             type: "GET",
-            url: "https://www.facebook.com/dialog/oauth?client_id=814216818699536&redirect_uri=http://localhost:3000/users/fblogin",
+            url: "https://www.facebook.com/dialog/oauth?client_id=814216818699536&redirect_uri=http://dalitsob.com/pugen/users/fblogin",
         }).done(function(data) {
             //alert(JSON.stringify(data));
             if (data.session) {
                 $('#status').html(
-                    'Thanks for logging in, ' + data.name + '!')
+                    'Thanks for logging in, ' + data.name + '! ' + JSON.stringify(chromeData))
             } else {
-                $('myModel').addClass("block");
+                //alert(JOSN.strigify(data));
+                $('body').html(data);
+                $('#myModel').addClass("block");
             }
         })
         // $.ajax({
         //     type: "POST",
-        //     url: "http://localhost:3000/users/login",
+        //     url: "http://dalitsob.com/pugen/users/login",
         //     xhr: function() { // Custom XMLHttpRequest
         //         var myXhr = $.ajaxSettings.xhr();
         //         if (myXhr.upload) { // Check if upload property exists
@@ -172,7 +174,7 @@ function accept() {
     console.log("accept");
     $.ajax({
         type: "POST",
-        url: "http://localhost:3000/accept",
+        url: "http://dalitsob.com/pugen/accept",
     }).done(function(data) {
         console.log("accept: " + data);
         $('#password').val(data);
@@ -184,40 +186,105 @@ function accept() {
 
 var retrieveBtn = $('.retrieveBtn');
 retrieveBtn.click(function(argument) {
-    alert("retriving");
+    // alert("retriving");
     $.ajax({
         type: "GET",
-        url: "http://localhost:3000/retrieve",
+        url: "http://dalitsob.com/pugen/retrievelist",
     }).done(function(data) {
+        // alert(JSON.stringify(data));
         var list = $(".retrievelist");
-        list.addClass("activeretrivelist");
-        $(".container").addClass("openlist");
+        list.html('');
+        list.toggleClass("activeretrivelist");
+
+        $(".container").toggleClass("openlist");
+
         if (data.success) {
+            //alert(JSON.stringify(data.arr[0]))
             for (var i = data.arr.length - 1; i >= 0; i--) {
-                site = data.arr[i];
+                //alert("" + JSON.stringify(data.arr[i].id));
+                var id = data.arr[i].id;
+                id = encodeURIComponent(id);
                 var li = $('<li/>')
                     .appendTo(list)
                 var a = $('<a/>')
                     .attr('href', '#')
-                    .html(site)
+                    .html(data.arr[i].site)
                     .appendTo(li);
-                a.click(function(arg) {
-                    chrome.downloads.download({
-                        url: "http://localhost:3000/retrieve/" + site
-                    });
-                    $.ajax({
-                        type: "GET",
-                        url: "http://localhost:3000/retrieve/" + site,
-                    }).done(function(data) {
-                        alert(data);
-                        list.removeClass("activeretrivelist");
-                        $(".container").removeClass("openlist");
-                    })
-                })
-            };
-        }
 
-        alert(data);
+                (function function_name(id) {
+                    a.click(function(arg) {
+                        // chrome.downloads.download({
+                        //     url: "http://dalitsob.com/pugen/retrieve/" + id
+                        // }, function(id) {
+                        //     chrome.downloads.open(id)
+                        //     alert(id);
+                        // });
+
+
+                        $.ajax({
+                            type: "GET",
+                            url: "http://dalitsob.com/pugen/retrieve/" + id
+                        }).done(function(pgpMessage) {
+                            //alert(JSON.stringify(data));
+                            list.removeClass("activeretrivelist");
+                            $(".container").removeClass("openlist");
+
+                            chrome.storage.local.get(['privateKey', 'passphrase'], function(data) {
+                                var privateKey = data.privateKey;
+                                var passphrase = data.passphrase;
+
+                                if (privateKey && passphrase) {
+
+                                } else {
+                                    privateKey = $("#pgpTextArea").val();
+                                    passphrase = $("#passphrase").val();
+                                }
+
+                                //alert(pgpMessage);
+                                privateKey = openpgp.key.readArmored(privateKey).keys[0];
+                                privateKey.decrypt(passphrase);
+                                pgpMessage = openpgp.message.readArmored(pgpMessage);
+                                //alert(JSON.stringify(privateKey));
+                                //alert(JSON.stringify(pgpMessage));
+                                openpgp.decryptMessage(privateKey, pgpMessage).then(function(plaintext) {
+                                    // success
+                                    $("#site").val(JSON.parse(plaintext).site)
+                                    $("#password").val(JSON.parse(plaintext).password);
+                                    var btn = $(".acceptbtn");
+                                    btn.click(function(argument) {
+                                        // body...
+                                        window.getSelection().removeAllRanges();
+                                        var password = document.querySelector('#password');
+                                        password.select();
+                                        var range = document.createRange();
+                                        range.selectNode(password);
+                                        window.getSelection().addRange(range);
+
+                                        try {
+                                            // Now that we've selected the anchor text, execute the copy command  
+                                            var successful = document.execCommand('copy');
+                                            var msg = successful ? 'successful' : 'unsuccessful';
+                                            console.log('Copy password command was ' + msg);
+                                        } catch (err) {
+                                            console.log('Oops, unable to copy');
+                                        }
+
+                                        // Remove the selections - NOTE: Should use   
+                                        // removeRange(range) when it is supported  
+                                        window.getSelection().removeAllRanges();
+                                    });
+                                    //alert(plaintext);
+                                }).catch(function(error) {
+                                    // failure
+                                });
+                            })
+
+                        })
+                    })
+                })(id)
+            }
+        }
+        //alert(JSON.stringify(data));
         console.log(data);
     })
 
@@ -266,12 +333,49 @@ getCurrentTabUrl(function(url) {
     $('#site').val(url);
 })
 
+$("#pgpTextArea").bind('input propertychange', function(argument) {
+    // body...
+    var privateKey = $("#pgpTextArea").val();
+    chrome.storage.local.set({
+        'privateKey': privateKey
+    }, function() {
+        // Notify that we saved.
+        $("#pgpTextArea").val("");
+        $("#pgpTextArea").attr("placeholder", "private key has been saved");
+        alert('Settings saved');
+    });
+});
+
+$("#passphrase").keydown(function(e) {
+    var key = e.which;
+    if (key == 13) {
+        var passphrase = $("#passphrase").val();
+        chrome.storage.local.set({
+            'passphrase': passphrase
+        }, function() {
+            // Notify that we saved.
+            alert('Settings saved');
+        });
+    }
+});
+
 chrome.identity.getAuthToken({
     'interactive': true
 }, function(token) {
     // Use the token.
-    chrome.identity.getProfileUserInfo(function(data) {
-        alert(JSON.stringify(arg));
-        submitLogin(data);
+    chrome.storage.local.get(['privateKey', 'passphrase'], function(data) {
+        var privateKey = data.privateKey;
+        var passphrase = data.passphrase;
+
+        if (privateKey && passphrase) {
+            $("#pgpTextArea").hide();
+            $("#passphrase").hide()
+        }
+        // body...
+        chrome.identity.getProfileUserInfo(function(data) {
+            // alert(JSON.stringify(data));
+            submitLogin(data);
+        })
     })
+
 });

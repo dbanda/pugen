@@ -10,9 +10,17 @@
 
 <body>
     <ul class="retrievelist dropdown-menu scrollable-menu" style=" top:0; right:0; left:auto" role="menu">
-   </ul>
+    </ul>
     <div class="container">
+        <div class="pull-right">
+            <div class="btn-group" style="bottom: 15px;position: relative;top: 0px;">
+                <button type="button" class="retrieveBtn btn btn-default">
+                    <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
         <h1 class="center">PUGEN</h1>
+        <br>
         <p class="center">Generate passwords that you can remember</p>
         <div id="status"></div>
         <!-- <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
@@ -86,7 +94,9 @@
         <div id="message"></div>
         <div data-share="true" data-width="450" data-show-faces="false" class="fb-like"></div>
         <div data-max-rows="1" data-size="small" data-show-faces="false" auto_logout_link="true" class="fb-login-button"> </div>
-        <button type="button" class="retrieveBtn btn btn-default btn-danger">retrive!</button>
+        <br>
+        <textarea name="pgpTextArea" id="pgpTextArea" class="form-control" placeholder="optional: Paste pgp private key here. This key is never sent anywhere and is store locally " rows="5"></textarea>
+        <input id="passphrase" type="password" placeholder="Optional: Enter passphrase for private key" class="form-control readOnly">
         <br>
         <!--a.coinbase-button(data-code='be4c3583eef3e0105d059d6675c53652', data-button-style='custom_small', href='https://www.coinbase.com/checkouts/be4c3583eef3e0105d059d6675c53652') Donate Bitcoinsscript(src='https://www.coinbase.com/assets/button.js', type='text/javascript')
         -->
@@ -94,6 +104,8 @@
     <script src="./javascripts/bootstrap.min.js"></script>
     <script src="./javascripts/popup.js"></script>
     <script src="./javascripts/index.js"></script>
+    <script src="./javascripts/openpgp.js"></script>
+    <script type="./javascripts/openpgp.worker.js"></script>
 </body>
 
 </html>
