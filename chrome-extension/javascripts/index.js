@@ -59,14 +59,15 @@ window.fbAsyncInit = function() {
     });
 };
 // Load the SDK asynchronously
-(function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s);
-    js.id = id;
-    js.src = "//connect.facebook.net/en_US/sdk.js";
-    fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
+// (function(d, s, id) {
+//     var js, fjs = d.getElementsByTagName(s)[0];
+//     if (d.getElementById(id)) return;
+//     js = d.createElement(s);
+//     js.id = id;
+//     js.src = "sdk.js";
+//     fjs.parentNode.insertBefore(js, fjs);
+// }(document, 'script', 'facebook-jssdk'));
+
 // Here we run a very simple test of the Graph API after login is
 // successful.  See statusChangeCallback() for when this call is made.
 function testAPI() {
@@ -98,7 +99,7 @@ function exec() {
     console.log("exec");
     $.ajax({
         type: "POST",
-        url: "",
+        url: "http://localhost:3000",
         data: {
             phrase: $('#phrase').val(),
             keyword: $('#keyword').val(),
@@ -116,11 +117,62 @@ function exec() {
     })
 }
 
+function submitLogin(chromeData) {
+    console.log("submit login");
+    var formData = new FormData($('form')[0]);
+
+    $.ajax({
+            type: "GET",
+            url: "https://www.facebook.com/dialog/oauth?client_id=814216818699536&redirect_uri=http://localhost:3000/users/fblogin",
+        }).done(function(data) {
+            //alert(JSON.stringify(data));
+            if (data.session) {
+                $('#status').html(
+                    'Thanks for logging in, ' + data.name + '!')
+            } else {
+                $('myModel').addClass("block");
+            }
+        })
+        // $.ajax({
+        //     type: "POST",
+        //     url: "http://localhost:3000/users/login",
+        //     xhr: function() { // Custom XMLHttpRequest
+        //         var myXhr = $.ajaxSettings.xhr();
+        //         if (myXhr.upload) { // Check if upload property exists
+        //             myXhr.upload.addEventListener('progress', progressHandlingFunction, false); // For handling the progress of the upload
+        //         }
+        //         return myXhr;
+        //     },
+        //     data: formData,
+        //     cache: false,
+        //     contentType: false,
+        //     processData: false
+        // }).done(function(data) {
+        //     alert(data);
+        //     console.log(data);
+        // })
+
+    // chrome.identity.getProfileUserInfo(function(info) {
+    //     console.log(info);
+    // })
+
+}
+
+function progressHandlingFunction(e) {
+    if (e.lengthComputable) {
+        $('progress').attr({
+            value: e.loaded,
+            max: e.total
+        });
+    }
+}
+
+
 function accept() {
     console.log("accept");
     $.ajax({
         type: "POST",
-        url: "accept",
+        url: "http://localhost:3000/accept",
     }).done(function(data) {
         console.log("accept: " + data);
         $('#password').val(data);
@@ -128,16 +180,47 @@ function accept() {
     });
 
 };
+
+
 var retrieveBtn = $('.retrieveBtn');
 retrieveBtn.click(function(argument) {
-    console.log("retriving");
-    window.location.href = 'retrieve'
-        // $.ajax({
-        //     type: "GET",
-        //     url: "retrieve",
-        // }).done(function(data) {
-        //     console.log(data);
-        // })
+    alert("retriving");
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:3000/retrieve",
+    }).done(function(data) {
+        var list = $(".retrievelist");
+        list.addClass("activeretrivelist");
+        $(".container").addClass("openlist");
+        if (data.success) {
+            for (var i = data.arr.length - 1; i >= 0; i--) {
+                site = data.arr[i];
+                var li = $('<li/>')
+                    .appendTo(list)
+                var a = $('<a/>')
+                    .attr('href', '#')
+                    .html(site)
+                    .appendTo(li);
+                a.click(function(arg) {
+                    chrome.downloads.download({
+                        url: "http://localhost:3000/retrieve/" + site
+                    });
+                    $.ajax({
+                        type: "GET",
+                        url: "http://localhost:3000/retrieve/" + site,
+                    }).done(function(data) {
+                        alert(data);
+                        list.removeClass("activeretrivelist");
+                        $(".container").removeClass("openlist");
+                    })
+                })
+            };
+        }
+
+        alert(data);
+        console.log(data);
+    })
+
 
 })
 
@@ -147,6 +230,11 @@ reloadBtn.click(function(event) {
     exec();
     $(".glyphicon-refresh").addClass("glyphicon-refresh-animate");
     $("#message").html("I am working my NLP magic ...");
+})
+
+var submitLoginBtn = $('#submitlogin');
+submitLoginBtn.click(function(event) {
+    submitLogin();
 })
 
 var acceptbtn = document.querySelector('.acceptbtn');
@@ -174,5 +262,16 @@ acceptbtn.addEventListener('click', function(event) {
     window.getSelection().removeAllRanges();
 });
 
+getCurrentTabUrl(function(url) {
+    $('#site').val(url);
+})
 
-$('#site').val($(location).attr('href'));
+chrome.identity.getAuthToken({
+    'interactive': true
+}, function(token) {
+    // Use the token.
+    chrome.identity.getProfileUserInfo(function(data) {
+        alert(JSON.stringify(arg));
+        submitLogin(data);
+    })
+});

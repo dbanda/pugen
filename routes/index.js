@@ -1,14 +1,16 @@
+'use strict'
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 var db = mongoose.connection;
 var models = require('./models');
-var createKeys = require('rsa-json');
+// var createKeys = require('rsa-json');
 var bcrypt = require('bcrypt');
 var gen = require('./gen')
 var gen_domain = require('./gen-domain')
 var openpgp = require('openpgp');
 var fs = require('fs');
+var https = require('https')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -17,7 +19,8 @@ router.get('/', function(req, res, next) {
     });
 });
 
-router.get('/retrieve', function(req, res, next) {
+
+router.get('/retrieveall', function(req, res, next) {
     if (req.session.user) {
         var user = req.session.user;
         var response = "";
@@ -36,8 +39,70 @@ router.get('/retrieve', function(req, res, next) {
                 }
                 res.download("passwords.txt");
             })
-
         })
+    } else {
+        res.json('user not logged in');
+    }
+})
+
+router.get('/retrieve', function(req, res, next) {
+    if (req.session.user) {
+        var user = req.session.user;
+        var response = "";
+
+        models.Pwords.find({
+            'userid': user.id
+        }, function(err, pwords) {
+
+            if (err) {
+                console.log(err);
+                res.json(err);
+            }
+            var arr = []
+            pwords.forEach(function(pword) {
+                arr.push(pword.site)
+            })
+            var data = {
+                arr: ["www.google.com", "bing.com"],
+                success: true
+            }
+            res.json(data);
+        });
+
+    } else {
+        res.json('user not logged in');
+    }
+})
+
+router.get('/retrieve/:site', function(req, res, next) {
+    if (req.session.user) {
+        var user = req.session.user;
+        var response = "";
+        var site = req.params.site;
+
+        models.Pwords.find({
+            'userid': user.id,
+            'site': site
+        }, function(err, pwords) {
+
+            if (err) {
+                console.log(err);
+                res.json(err);
+            }
+            var response = "";
+            pwords.forEach(function(pword) {
+                response = response + '\n' + pword.encrypted_password + '\n\n';
+            })
+
+            fs.writeFile("passwords.txt", "response", function(err) {
+                console.log("writing passwords to file:  ");
+                if (err) {
+                    console.log(err)
+                }
+                res.download("passwords.txt");
+            })
+        });
+
     } else {
         res.json('user not logged in');
     }

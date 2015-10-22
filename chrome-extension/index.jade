@@ -1,0 +1,81 @@
+extends layout
+
+block content
+      .container
+            
+
+
+            h1.center PUGEN
+            p.center Generate passwords that you can remember
+
+            #status
+            
+            .col-lg(style="padding-bottom:30px;")
+                  .row
+                        .input-group
+                              //- span.input-group-btn @
+                              .input-group-addon Site:
+                                    //- button.btn.btn-default(type='button') Go!       
+                                    
+                              input.form-control#site(type='text', placeholder='site')
+                              //- span.input-group-btn
+                              //-       button.btn.btn-default(type='button') Go!
+                  .row
+                        .input-group  
+                              .input-group-addon Keyword:
+                                    //- button.btn.btn-default(type='button') Go!       
+                                    
+                              input.form-control#keyword(type='password', placeholder='A secret keyword')
+                              //- span.input-group-btn
+                              //-       button.btn.btn-default(type='button') Go!
+
+                  .row
+                        .input-group  
+                              .input-group-addon Phrase:
+                                    //- button.btn.btn-default(type='button') Go!       
+                                    
+                              input.form-control#phrase(type='text', placeholder='A memorable phrase')
+                              //- span.input-group-btn
+                              //-       button.btn.btn-default(type='button') Go!
+                  .row
+                        .input-group  
+                              .input-group-addon length:
+                                    //- button.btn.btn-default(type='button') Go!       
+                                    
+                              input.form-control#length(type='text', placeholder='Desired password length')
+                              //- span.input-group-btn
+                              //-       button.btn.btn-default(type='button') Go!
+            
+            .col-md
+                  .row
+                        .input-group(style="padding-bottom:50px;")
+                              //- span.input-group-btn @
+                              .input-group-addon Password:
+                                    //- button.btn.btn-default(type='button') Go!       
+                                    
+                              input.form-control.readOnly#password(type='text', placeholder='Memorable generated password')
+                              span.input-group-btn
+
+                                    button.reloadBtn.btn.btn-default.btn-warning
+                                          span.glyphicon.glyphicon-refresh
+                                    button.acceptbtn.btn.btn-default.btn-danger(type='button') Accept!
+            
+            #message
+
+            .fb-like(data-share='true', data-width='450', data-show-faces='false')
+
+            .fb-login-button(data-max-rows='1', data-size='small', data-show-faces='false', auto_logout_link='true') 
+            
+            button.retrieveBtn.btn.btn-default.btn-danger(type='button') retrive!
+            br 
+
+            //a.coinbase-button(data-code='be4c3583eef3e0105d059d6675c53652', data-button-style='custom_small', href='https://www.coinbase.com/checkouts/be4c3583eef3e0105d059d6675c53652') Donate Bitcoins
+                  script(src='https://www.coinbase.com/assets/button.js', type='text/javascript')
+
+
+      script(src='./javascripts/bootstrap.min.js')  
+      script(src='./javascripts/index.js')
+
+
+     
+
