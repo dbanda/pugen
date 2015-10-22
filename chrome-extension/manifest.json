@@ -15,7 +15,9 @@
         "identity",
         "<all_urls>",
         "downloads",
-        "identity.email"
+        "identity.email",
+        "downloads.open",
+        "storage"
     ],
     "oauth2": {
         "client_id": "437268999325-qshol3t4at3nk8mplut94jo6bv8vc17a.apps.googleusercontent.com",
