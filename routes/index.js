@@ -63,7 +63,7 @@ router.get('/retrieve', function(req, res, next) {
                 arr.push(pword.site)
             })
             var data = {
-                arr: ["www.google.com", "bing.com"],
+                arr: arr, 
                 success: true
             }
             res.json(data);
