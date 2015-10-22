@@ -1,1 +1,5 @@
 node_modules
+tmp
+/home/dalitso/pugen/tmp
+/home/dalitso/pugen/tmp/**
+**/tmp/**
