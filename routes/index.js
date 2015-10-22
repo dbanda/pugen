@@ -3,18 +3,47 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var db = mongoose.connection;
 var models = require('./models');
-var createKeys = require('rsa-json');
+// var createKeys = require('rsa-json');
 var bcrypt = require('bcrypt');
 var gen = require('./gen')
 var gen_domain = require('./gen-domain')
 var openpgp = require('openpgp');
 var fs = require('fs');
+var https = require('https')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
     res.render('index', {
         title: 'Express'
     });
+});
+
+router.get('/fblogin', function(req, ret, next) {
+
+    https.get("https://graph.facebook.com/v2.3/oauth/access_token?client_id=814216818699536&redirect_uri=http://localhost:3000/fblogin&client_secret=37f2fcfafed8cc314744068ac148bc78&code=" + req.query.code, function(res) {
+        console.log("Got response: " + res.statusCode);
+        res.on('data', function(d) {
+            access_token = JSON.parse(d.toString());
+            https.get("https://graph.facebook.com/me?fields=public_key&access_token=" + access_token.access_token, function(res) {
+                console.log("Got response: " + res);
+                var body
+                res.on('data', function(d) {
+                    body += d
+                });
+
+                res.on('end', function(d) {
+                    body = body.toString();
+                    ret.json(body)
+                });
+
+            }).on('error', function(e) {
+                console.log("Got error: " + e.message);
+            });
+        });
+    }).on('error', function(e) {
+        console.log("Got error: " + e.message);
+    });
+
 });
 
 router.get('/retrieve', function(req, res, next) {
