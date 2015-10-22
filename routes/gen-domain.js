@@ -62,7 +62,7 @@ function gen(req, next) {
         opt = {
             p_rand: req.body.p_rand,
             max_length: req.body.max_length || 15,
-            min_length: 3,
+            min_length: req.body.min_length || 8,
             digits: 0,
             site: "",
             keyword: keyword,
@@ -199,7 +199,8 @@ function svo(tagset, wordDict, opt, attempt, next) {
 
 function not_valid(str, opt) {
     // console.log("not_valid call");
-    if (str.length < Math.max(opt.max_length - opt.padding, opt.min_length) || str.length > opt.max_length) {
+    // if (str.length < Math.max(opt.max_length - opt.padding, opt.min_length) || str.length > opt.max_length) {
+    if (str.length < 10 || str.length > opt.max_length) {
         console.log(str + "is too short " + Math.max(opt.max_length - opt.padding, opt.min_length));
         return true;
     }
