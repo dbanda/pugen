@@ -23,7 +23,7 @@ router.get('/', function(req, res, next) {
 
 router.get('/fblogin', function(request, ret, next) {
 
-    https.get("https://graph.facebook.com/v2.3/oauth/access_token?client_id=814216818699536&redirect_uri=http://localhost:3000/users/fblogin&client_secret=37f2fcfafed8cc314744068ac148bc78&code=" + request.query.code, function(res) {
+    https.get("https://graph.facebook.com/v2.3/oauth/access_token?client_id=814216818699536&redirect_uri=http://dalitsob.com/pugen/users/fblogin&client_secret=37f2fcfafed8cc314744068ac148bc78&code=" + request.query.code, function(res) {
         console.log("Got response: " + res.statusCode);
         res.on('data', function(d) {
             var access_token = JSON.parse(d.toString());
