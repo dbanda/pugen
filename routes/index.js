@@ -45,7 +45,7 @@ router.get('/retrieveall', function(req, res, next) {
     }
 })
 
-router.get('/retrieve', function(req, res, next) {
+router.get('/retrievelist', function(req, res, next) {
     if (req.session.user) {
         var user = req.session.user;
         var response = "";
@@ -53,14 +53,14 @@ router.get('/retrieve', function(req, res, next) {
         models.Pwords.find({
             'userid': user.id
         }, function(err, pwords) {
-
+            console.log("finding pwords" + pwords);
             if (err) {
                 console.log(err);
                 res.json(err);
             }
             var arr = []
             pwords.forEach(function(pword) {
-                arr.push(pword.site)
+                arr.push({site: pword.site, id: pword._id})
             })
             var data = {
                 arr: arr, 
@@ -75,31 +75,27 @@ router.get('/retrieve', function(req, res, next) {
 })
 
 router.get('/retrieve/:site', function(req, res, next) {
+    console.log("retrieving for specific site");
     if (req.session.user) {
         var user = req.session.user;
-        var response = "";
         var site = req.params.site;
-
-        models.Pwords.find({
-            'userid': user.id,
-            'site': site
-        }, function(err, pwords) {
-
+        console.log("retriving for " +site + " " +user.id);
+        models.Pwords.findById(
+            site
+        , function(err, pword) {
+            console.log("finding site pwords" +pword);
             if (err) {
                 console.log(err);
                 res.json(err);
             }
-            var response = "";
-            pwords.forEach(function(pword) {
-                response = response + '\n' + pword.encrypted_password + '\n\n';
-            })
+            var response = pword.encrypted_password;
 
-            fs.writeFile("passwords.txt", "response", function(err) {
+            fs.writeFile("/home/dalitso/tmp/" + encodeURIComponent(pword.site) + "passwords.txt", response, function(err) {
                 console.log("writing passwords to file:  ");
                 if (err) {
                     console.log(err)
                 }
-                res.download("passwords.txt");
+                res.download("/home/dalitso/tmp/" + encodeURIComponent(pword.site)+"passwords.txt");
             })
         });
 
