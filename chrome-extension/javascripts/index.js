@@ -128,47 +128,34 @@ function submitLogin(chromeData) {
             //alert(JSON.stringify(data));
             if (data.session) {
                 $('#status').html(
-                    'Thanks for logging in, ' + data.name + '! ' + JSON.stringify(chromeData))
+                    'Thanks for logging in via FB, ' + data.name + '! ' + JSON.stringify(chromeData))
             } else {
+
+                $('#status').html(
+                    'Looks like you are a new user with data:' + JSON.stringify(chromeData) +
+                    'Paste your public key for encryption in the text area below')
+                $("#publicKeyTextArea").show();
                 //alert(JOSN.strigify(data));
                 $('body').html(data);
                 $('#myModel').addClass("block");
+                $.ajax({
+                    type: "POST",
+                    url: "users/login",
+                    data: {
+                        id: chromeData.id,
+                        public_key: response.public_key,
+
+                    }
+                }).done(function(data) {
+                    $("#publicKeyTextArea").hide();
+                    console.log(data);
+                    console.log('Successful login for: ' + response.name);
+                    document.getElementById('status').innerHTML =
+                        'Thanks for logging in, ' + response.name + '!';
+                });
             }
         })
-        // $.ajax({
-        //     type: "POST",
-        //     url: "http://dalitsob.com/pugen/users/login",
-        //     xhr: function() { // Custom XMLHttpRequest
-        //         var myXhr = $.ajaxSettings.xhr();
-        //         if (myXhr.upload) { // Check if upload property exists
-        //             myXhr.upload.addEventListener('progress', progressHandlingFunction, false); // For handling the progress of the upload
-        //         }
-        //         return myXhr;
-        //     },
-        //     data: formData,
-        //     cache: false,
-        //     contentType: false,
-        //     processData: false
-        // }).done(function(data) {
-        //     alert(data);
-        //     console.log(data);
-        // })
-
-    // chrome.identity.getProfileUserInfo(function(info) {
-    //     console.log(info);
-    // })
-
 }
-
-function progressHandlingFunction(e) {
-    if (e.lengthComputable) {
-        $('progress').attr({
-            value: e.loaded,
-            max: e.total
-        });
-    }
-}
-
 
 function accept() {
     console.log("accept");
@@ -346,6 +333,19 @@ $("#pgpTextArea").bind('input propertychange', function(argument) {
     });
 });
 
+$("#publicKeyTextArea").bind('input propertychange', function(argument) {
+    // body...
+    var publicKey = $("#publicKeyTextArea").val();
+    chrome.storage.local.set({
+        'publicKey': publicKey
+    }, function() {
+        // Notify that we saved.
+        $("#publicKeyTextArea").val("");
+        $("#publicKeyTextArea").attr("placeholder", "public key has been saved");
+        alert('Settings saved');
+    });
+});
+
 $("#passphrase").keydown(function(e) {
     var key = e.which;
     if (key == 13) {
@@ -368,6 +368,7 @@ chrome.storage.local.get(['privateKey', 'passphrase'], function(data) {
             $("#passphrase").hide()
         }
         // body...
+        $("#publicKeyTextArea").hide();
         chrome.identity.getProfileUserInfo(function(data) {
             // alert(JSON.stringify(data));
             submitLogin(data);
