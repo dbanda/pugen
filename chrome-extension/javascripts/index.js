@@ -359,11 +359,7 @@ $("#passphrase").keydown(function(e) {
     }
 });
 
-chrome.identity.getAuthToken({
-    'interactive': true
-}, function(token) {
-    // Use the token.
-    chrome.storage.local.get(['privateKey', 'passphrase'], function(data) {
+chrome.storage.local.get(['privateKey', 'passphrase'], function(data) {
         var privateKey = data.privateKey;
         var passphrase = data.passphrase;
 
@@ -377,5 +373,3 @@ chrome.identity.getAuthToken({
             submitLogin(data);
         })
     })
-
-});
