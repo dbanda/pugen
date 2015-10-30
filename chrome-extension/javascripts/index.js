@@ -99,7 +99,7 @@ function exec() {
     console.log("exec");
     $.ajax({
         type: "POST",
-        url: "http://dalitsob.com/pugen",
+        url: "http://dalitsob.com/pugen/",
         data: {
             phrase: $('#phrase').val(),
             keyword: $('#keyword').val(),
@@ -111,9 +111,17 @@ function exec() {
         }
     }).done(function(data) {
         console.log(data);
-        $("#password").val(data);
         $(".glyphicon-refresh").removeClass("glyphicon-refresh-animate");
-        $("#message").html("password generated");
+        if (data.success){
+            $("#password").val(data.success);
+            $("#message").html("password generated");
+            $("#password").removeAttr("readonly");
+            $(".copybtn").hide();
+            $(".acceptbtn").show();
+        }else{
+            $("#message").html("error generating password");
+        }
+
     })
 }
 
@@ -128,7 +136,7 @@ function submitLogin(chromeData) {
             //alert(JSON.stringify(data));
             if (data.session) {
                 $('#status').html(
-                    'Thanks for logging in via FB, ' + data.name + '! ' + JSON.stringify(chromeData))
+                    'Thanks for logging in via FB, ' + data.name + '! ' ); //+ JSON.stringify(chromeData))
             } else {
 
                 $('#status').html(
@@ -180,20 +188,21 @@ retrieveBtn.click(function(argument) {
     }).done(function(data) {
         // alert(JSON.stringify(data));
         var list = $(".retrievelist");
-        list.html('');
-        list.toggleClass("activeretrivelist");
-
-        $(".container").toggleClass("openlist");
-
         if (data.success) {
             //alert(JSON.stringify(data.arr[0]))
+            if(data.arr.length > 0){
+                list.html('');
+                list.toggleClass("activeretrivelist");
+                $(".container").toggleClass("openlist");
+                $("#hacker-list").toggle();
+            }
             for (var i = data.arr.length - 1; i >= 0; i--) {
                 //alert("" + JSON.stringify(data.arr[i].id));
                 var id = data.arr[i].id;
                 id = encodeURIComponent(id);
                 var li = $('<li/>')
                     .appendTo(list)
-                var a = $('<a/>')
+                var a = $('<a class="sitename"/>')
                     .attr('href', '#')
                     .html(data.arr[i].site)
                     .appendTo(li);
@@ -215,6 +224,7 @@ retrieveBtn.click(function(argument) {
                             //alert(JSON.stringify(data));
                             list.removeClass("activeretrivelist");
                             $(".container").removeClass("openlist");
+                            $("#hacker-list").hide();
 
                             chrome.storage.local.get(['privateKey', 'passphrase'], function(data) {
                                 var privateKey = data.privateKey;
@@ -228,7 +238,23 @@ retrieveBtn.click(function(argument) {
                                 }
 
                                 //alert(pgpMessage);
-                                privateKey = openpgp.key.readArmored(privateKey).keys[0];
+                                var armored = openpgp.key.readArmored(privateKey);
+                                if (armored.err){
+                                    alert(armored.err + " \n" + "please reenter passphrase and private key");
+                                    chrome.storage.local.set({
+                                    'privateKey': null,
+                                    'passphrase': null
+                                    }, function() {
+                                        $("#pgpTextArea").show();
+                                        $("#pgpTextArea").attr("placeholder", "paste private key");
+
+                                        $("#passphrase").show();
+                                        $("#passphrase").attr("placeholder", "enter passphrase and press enter");
+
+                                    })
+                                    return
+                                }
+                                privateKey = armored.keys[0];
                                 privateKey.decrypt(passphrase);
                                 pgpMessage = openpgp.message.readArmored(pgpMessage);
                                 //alert(JSON.stringify(privateKey));
@@ -237,7 +263,10 @@ retrieveBtn.click(function(argument) {
                                     // success
                                     $("#site").val(JSON.parse(plaintext).site)
                                     $("#password").val(JSON.parse(plaintext).password);
-                                    var btn = $(".acceptbtn");
+                                    $("#password").attr("readonly", "readonly");
+                                    $(".copybtn").show();
+                                    $(".acceptbtn").hide();
+                                    var btn = $(".copybtn");
                                     btn.click(function(argument) {
                                         // body...
                                         window.getSelection().removeAllRanges();
@@ -252,6 +281,8 @@ retrieveBtn.click(function(argument) {
                                             var successful = document.execCommand('copy');
                                             var msg = successful ? 'successful' : 'unsuccessful';
                                             console.log('Copy password command was ' + msg);
+                                            $('#status').html('copied password to clipboard');
+                                            
                                         } catch (err) {
                                             console.log('Oops, unable to copy');
                                         }
@@ -269,7 +300,15 @@ retrieveBtn.click(function(argument) {
                         })
                     })
                 })(id)
+
+
             }
+
+            var options = {
+                valueNames: [ 'sitename']
+            };
+
+            var hackerList = new List('hacker-list', options);
         }
         //alert(JSON.stringify(data));
         console.log(data);
@@ -329,7 +368,7 @@ $("#pgpTextArea").bind('input propertychange', function(argument) {
         // Notify that we saved.
         $("#pgpTextArea").val("");
         $("#pgpTextArea").attr("placeholder", "private key has been saved");
-        alert('Settings saved');
+        console.log('Settings saved');
     });
 });
 
@@ -342,7 +381,7 @@ $("#publicKeyTextArea").bind('input propertychange', function(argument) {
         // Notify that we saved.
         $("#publicKeyTextArea").val("");
         $("#publicKeyTextArea").attr("placeholder", "public key has been saved");
-        alert('Settings saved');
+        console.log('Settings saved');
     });
 });
 
@@ -354,11 +393,13 @@ $("#passphrase").keydown(function(e) {
             'passphrase': passphrase
         }, function() {
             // Notify that we saved.
-            alert('Settings saved');
+            $("#passphrase").hide();
+            $('#status').html('Settings saved');
         });
     }
 });
-
+$(".copybtn").hide();
+$("#hacker-list").hide();
 chrome.storage.local.get(['privateKey', 'passphrase'], function(data) {
         var privateKey = data.privateKey;
         var passphrase = data.passphrase;

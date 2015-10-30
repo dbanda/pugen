@@ -152,7 +152,7 @@ router.post('/', function(req, res, next) {
                 time: Date.now(),
                 user: user.id
             }
-            res.json(pword);
+            res.json({success:pword});
         });
     } else {
         res.json('user not logged in');

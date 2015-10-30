@@ -9,8 +9,13 @@
 </head>
 
 <body>
-    <ul class="retrievelist dropdown-menu scrollable-menu" style=" top:0; right:0; left:auto" role="menu">
-    </ul>
+    <div id="hacker-list" style=" top:0; right:0; left:auto" >
+        <input class="search"/>
+        
+
+        <ul class="retrievelist dropdown-menu scrollable-menu list" style=" top:25px; right:0; left:auto" role="menu">
+        </ul>
+    </div>
     <div class="container">
         <div class="pull-right">
             <div class="btn-group" style="bottom: 15px;position: relative;top: 0px;">
@@ -86,8 +91,14 @@
             <div class="row">
                 <div style="padding-bottom:3px;" class="input-group">
                     <div class="input-group-addon">Password:</div>
-                    <input id="password" type="text" placeholder="Memorable generated password" class="form-control readOnly"><span class="input-group-btn"><button class="reloadBtn btn btn-default btn-warning"><span class="glyphicon glyphicon-refresh"></span></button>
+                    <input id="password" type="text" placeholder="Memorable generated password" class="form-control readOnly">
+                    <span class="input-group-btn">
+                    <button class="reloadBtn btn btn-default btn-warning">
+                        <span class="glyphicon glyphicon-refresh"></span>
+                    </button>
                     <button type="button" class="acceptbtn btn btn-default btn-danger">Accept!</button>
+                    <button type="button" class="copybtn btn btn-default ">copy!</button>
+ 
                     </span>
                 </div>
             </div>
@@ -104,9 +115,10 @@
     </div>
     <script src="./javascripts/bootstrap.min.js"></script>
     <script src="./javascripts/popup.js"></script>
-    <script src="./javascripts/index.js"></script>
+    <script src="./javascripts/list.js"></script>
     <script src="./javascripts/openpgp.js"></script>
     <script type="./javascripts/openpgp.worker.js"></script>
+    <script src="./javascripts/index.js"></script>
 </body>
 
 </html>
