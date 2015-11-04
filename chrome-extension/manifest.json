@@ -3,7 +3,7 @@
 
     "name": "Pugen",
     "description": "password generator and encryption vault",
-    "version": "1.2",
+    "version": "1.3",
 
     "browser_action": {
         "default_icon": "icon.png",
