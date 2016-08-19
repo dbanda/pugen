@@ -1,0 +1,63 @@
+<img src="icon.png" style="right:2px; top:2px; width:0.7em"><div class="row-inner" style="border: 5px solid black; padding: 3px; left:50%; width:300px; margin:0; padding:0; top: 25%; background-color:white; z-index: 9999999">
+    <form autocomplete="off" id="pwform">
+<!--         <h3>Password Length:</h3>
+        <input type="text" name="length" id="length" maxlength="3">
+        <h3>Password Formula:</h3> -->
+        <div id="pw-formula" class="line-box">
+            <label>
+                Password: <input type="text" id="password">
+            </label>
+            <br>
+            <p id="message"><p>
+            <br>
+            <label>
+                Minimum number count: <input type="number" name="quantity" min="1" max="5" value="2">
+            </label>
+            <br>
+
+            <label>
+                Min-length: <input type="number" name="quantity" min="1" max="5" value="12">
+            </label>
+            <br>
+            
+            <label>
+                Max-length: <input type="number" name="quantity" min="1" max="5" value="18">
+            </label>
+            <br>
+            <label>
+                Minumum Uppercase count: <input type="number" name="quantity" min="1" max="5" value="3">
+            </label>
+            <br>
+            <label>
+                Minimum Lowercase count: <input type="number" name="quantity" min="1" max="5" value="3">
+            </label>
+            <br>
+            <label>
+                Minimum Special Character count: <input type="number" name="quantity" min="1" max="5" value="2">
+            </label>
+            <br>
+<!--             <label>
+                <input type="radio" name="pw-type" checked="" id="reqevery">Allow All Character Types</label>
+            <br>
+            <label> -->
+            <input type="checkbox" name="pw-type" id="pronounceable" value="true" checked="checked">Make Pronounceable</label>
+            <br>
+<!--             <label>
+                <input type="checkbox" checked="" name="pw-char" id="upper">A-Z</label>
+            <label>
+                <input type="checkbox" checked="" name="pw-char" id="lower">a-z</label>
+            <label>
+                <input type="checkbox" checked="" name="pw-char" id="digits">0-9</label>
+            <label>
+                <input type="checkbox" checked="" name="pw-char" id="special">!$%@#</label>
+            <br> -->
+<!--             <label>
+                <input type="text" style="width: 50px;" maxlength="3" id="mindigits">Minimum Numeric Characters:</label>
+            <br>
+            <label>
+                <input type="checkbox" id="ambig">Avoid Ambiguous Characters</label>
+                <br> -->
+                <button type="button">Generate</button>
+        </div>
+        <h3 id="error-msg" style="color: rgb(211, 45, 39); margin-top: 15px; display: none;">Please do not let your minimum numeric characters exceed your password length.<br></h3></form>
+</div>

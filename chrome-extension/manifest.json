@@ -9,6 +9,9 @@
         "default_icon": "icon.png",
         "default_popup": "index.html"
     },
+
+    "web_accessible_resources": ["javascripts/pop.html", "javascripts/icon.png"],
+
     "permissions": [
         "activeTab",
         "https://ajax.googleapis.com/",
@@ -24,6 +27,18 @@
         "scopes": [
             "https://www.googleapis.com/auth/drive"
         ]
-    }
+    },
+     "content_scripts": [{
+        "matches": ["<all_urls>"],
+        "js": [
+            "javascripts/password-generator.min.js",
+            "javascripts/jquery-1.11.3.min.js",
+            "javascripts/contents.js"
+
+        ],
+        "run_at": "document_idle",
+        "all_frames": true
+    }]
+
 
 }
