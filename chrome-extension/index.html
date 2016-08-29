@@ -53,118 +53,13 @@
                         <br>
                         <button type="button" id="btnGen">Generate</button>
                         <br>
-                        <button type="button" id="btnSav">Save</button>
+                        <button type="button" id="btnSav">Save Settings</button>
             </div>
             <h3 id="error-msg" style="color: rgb(211, 45, 39); margin-top: 15px; display: none;">Please do not let your minimum numeric characters exceed your password length.<br></h3></form>
         <h3 id="msg"></h3>
     </div>
-    <script type="text/javascript">
-    // var generatePassword = require("password-generator");
-    var maxLength = 18;
-    var minLength = 12;
-    var uppercaseMinCount = 3;
-    var lowercaseMinCount = 3;
-    var numberMinCount = 2;
-    var specialMinCount = 2;
-    var pronouncable = true
 
-    var UPPERCASE_RE = /([A-Z])/g;
-    var LOWERCASE_RE = /([a-z])/g;
-    var NUMBER_RE = /([\d])/g;
-    var SPECIAL_CHAR_RE = /([\?\-])/g;
-    var NON_REPEATING_CHAR_RE = /([\w\d\?\-])\1{2,}/g;
-
-    function isStrongEnough(password) {
-        var uc = password.match(UPPERCASE_RE);
-        var lc = password.match(LOWERCASE_RE);
-        var n = password.match(NUMBER_RE);
-        var sc = password.match(SPECIAL_CHAR_RE);
-        var nr = password.match(NON_REPEATING_CHAR_RE);
-        return password.length >= minLength &&
-            !nr &&
-            uc && uc.length >= uppercaseMinCount &&
-            lc && lc.length >= lowercaseMinCount &&
-            n && n.length >= numberMinCount &&
-            sc && sc.length >= specialMinCount;
-    }
-
-    function customPassworsd() {
-        var password = "";
-        var randomLength = Math.floor(Math.random() * (maxLength - minLength)) + minLength;
-
-        console.log('password random length: ', randomLength)
-        while (!isStrongEnough(password)) {
-            password = generatePassword(randomLength, pronouncable, /[\w\d\?\-]/);
-            password += (Math.pow(10, numberMinCount) + Math.floor(Math.random() * (9 * Math.pow(10, numberMinCount))))
-        }
-
-        return password;
-    }
-
-    function saveChanges() {
-        // Save it using the Chrome extension storage API.
-        chrome.storage.sync.set({
-                maxLength: maxLength,
-                minLength: minLength,
-                uppercaseMinCount: uppercaseMinCount,
-                lowercaseMinCount: lowercaseMinCount,
-                numberMinCount: numberMinCount,
-                specialMinCount: specialMinCount,
-                pronouncable: pronouncable
-
-            },
-            function() {
-                // Notify that we saved.
-                message('Settings saved');
-            });
-    }
-
-    $('#btnGen').click(
-        function() {
-            console.log("generating password")
-            maxLength = +$('#maxLength').val() || 18;
-            minLength = +$('#minLength').val() || 12;
-            uppercaseMinCount = +$('#uppercaseMinCount').val() || 3;
-            lowercaseMinCount = +$('#lowercaseMinCount').val() || 3;
-            numberMinCount = +$('#numberMinCount').val() || 2;
-            specialMinCount = +$('#specialMinCount').val() || 2;
-            pronouncable = $('#pronouncable').val() || true
-
-            console.log("params: ", maxLength, minLength, uppercaseMinCount, lowercaseMinCount, numberMinCount, specialMinCount, pronouncable)
-            var pword = customPassworsd()
-
-            password = $('#password')
-            password.val(pword)
-
-            var range = document.createRange();
-            range.selectNode(password[0]);
-            window.getSelection().addRange(range);
-
-            try {
-                // Now that we've selected the anchor text, execute the copy command  
-                var successful = document.execCommand('copy');
-                var msg = successful ? 'successful' : 'unsuccessful';
-                console.log('Copy password command was ' + msg);
-                $('#msg').text('password copied to clipboard')
-                p.find('#message').html('copied password to clipboard');
-
-            } catch (err) {
-                console.log('Oops, unable to copy');
-            }
-        })
-    $('#btnSav').click(
-        function() {
-            console.log("saving password")
-            maxLength = +$('#maxLength').val() || 18;
-            minLength = +$('#minLength').val() || 12;
-            uppercaseMinCount = +$('#uppercaseMinCount').val() || 3;
-            lowercaseMinCount = +$('#lowercaseMinCount').val() || 3;
-            numberMinCount = +$('#numberMinCount').val() || 2;
-            specialMinCount = +$('#specialMinCount').val() || 2;
-            pronouncable = $('#pronouncable').val() || true
-            saveChanges();
-        })
-    </script>
+    <script type="text/javascript" src="index.js"></script>
 </body>
 
 </html>
