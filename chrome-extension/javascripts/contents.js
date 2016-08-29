@@ -6,10 +6,12 @@ function inject(input) {
     username.css('position', 'relative');
     $.get(chrome.extension.getURL('javascripts/pop.html'), function(data) {
         var pop = $(data)
-        console.log(pop)
+        console.log("lodded pop next drawing lock", pop)
             // pop.css('position', 'absolute')
         var img = $(pop[0])
         img.css('position', 'absolute')
+        img.css('z-index', '2147483647')
+        img.css('max-width', '100px')
         var p = $(pop[1])
         p.css('position', 'fixed')
         img.attr('src', chrome.extension.getURL('javascripts/icon.png'))
@@ -31,8 +33,8 @@ function inject(input) {
                     $('body')[0].onclick = oldClick
                 }
             }
-
-
+            
+            $('body').prepend(p)
             p.show()
             var password = p.find('#password')[0]
 
@@ -67,7 +69,7 @@ function inject(input) {
             // pop.css('top', '-10px')
             // pop.css('width', '250px')
         username.append(img)
-        $('body').prepend(p)
+        // $('body').prepend(p)
     }, 'html')
 
 }
@@ -81,8 +83,12 @@ function inject(input) {
 
 // inject($('input')[0])
 // 
+// 
+
+$('body').prepend($('<p></p>'))
 
 var passwords = $('input[type=password]')
+console.log("number of password fields detected: ", passwords.length)
 
 function fill(data) {
     for (var i = passwords.length - 1; i >= 0; i--) {
