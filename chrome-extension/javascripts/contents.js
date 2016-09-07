@@ -85,21 +85,25 @@ function inject(input) {
 // 
 // 
 
-$('body').prepend($('<p></p>'))
 
-var passwords = $('input[type=password]')
-console.log("number of password fields detected: ", passwords.length)
 
-function fill(data) {
-    for (var i = passwords.length - 1; i >= 0; i--) {
-        $(passwords[i]).val(data)
+setTimeout( function() {
+    $('body').prepend($('<p></p>'))
+    var passwords = $('input[type=password]')
+    console.log("number of password fields detected: ", passwords.length)
+
+    function fill(data) {
+        for (var i = passwords.length - 1; i >= 0; i--) {
+            $(passwords[i]).val(data)
+        }
     }
-}
 
-if (passwords.length > 0) {
-    inject($(passwords[0]), passwords)
-        // fill(customPassworsd());
-}
+    if (passwords.length > 0) {
+        inject($(passwords[0]), passwords)
+            // fill(customPassworsd());
+    }
+}, 3000)
+
 
 // var generatePassword = require("password-generator");
 var maxLength = 18;
