@@ -20,10 +20,13 @@ function inject(input) {
 
         p.click(function() {
             alert("p clicked 2")
-            p.toggle()
+            getChanges()
+            
             var password = p.find('#password')[0]
+            alert(JSON.stringify(password))
             password.select();
-            alert(password.val())
+            p.toggle()
+            
 
             try {
                 // Now that we've selected the anchor text, execute the copy command  
@@ -57,7 +60,6 @@ function inject(input) {
 
             var passwordText = customPassworsd()
             p.find('#password').val(passwordText)
-            fill(passwordText)
             window.getSelection().removeAllRanges();
             // var password = document.querySelector('#password');
             password.select();
@@ -169,3 +171,34 @@ function customPassworsd() {
 console.log($('input'))
     // $('input').val('input')
 console.log(chrome.extension.getURL('pop.html'))
+
+
+function getChanges() {
+    chrome.storage.sync.get(
+        function(data) {
+            maxLength = data.maxLength
+            minLength = data.minLength
+            uppercaseMinCount = data.uppercaseMinCount
+            lowercaseMinCount = data.lowercaseMinCount
+            numberMinCount = data.numberMinCount
+            specialMinCount = data.specialMinCount
+            pronounceable = false
+            console.log("got changes: ", data)
+
+            $('#maxLength').val(maxLength)
+            $('#minLength').val(minLength)
+            $('#uppercaseMinCount').val(uppercaseMinCount)
+            $('#lowercaseMinCount').val(lowercaseMinCount)
+            $('#numberMinCount').val(numberMinCount)
+            $('#specialMinCount').val(specialMinCount)
+            $('#pronounceable').val(pronounceable)
+
+            // updateCheckbox()
+            // updateCheckbox()
+            if(!pronounceable){
+                $('#pronounceable').removeAttr('checked')
+            }
+            alert(data)
+        })
+}
+
