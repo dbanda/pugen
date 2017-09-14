@@ -19,6 +19,7 @@ function isStrongEnough(password) {
     var n = password.match(NUMBER_RE);
     var sc = password.match(SPECIAL_CHAR_RE);
     var nr = password.match(NON_REPEATING_CHAR_RE);
+    console.log("strong test",password,uc, lc, n, sc, nr)
     return password.length >= minLength &&
         !nr &&
         uc && uc.length >= uppercaseMinCount &&
@@ -33,12 +34,14 @@ function customPassworsd() {
     console.log('password random length: ', randomLength)
 
     password = generatePassword(randomLength, pronounceable, /[\w\d\?\-]/);
-    if (!pronounceable) {
-        while (!isStrongEnough(password)) {
-            password = generatePassword(randomLength, pronounceable, /[\w\d\?\-]/);
-    // password += (Math.pow(10, numberMinCount) + Math.floor(Math.random() * (9 * Math.pow(10, numberMinCount))))
-        }
-    }
+    console.log("first  attempt", password)
+    // if (!pronounceable) {
+    //     while (!isStrongEnough(password)) {
+    //         password = generatePassword(randomLength, pronounceable, /[\w\d\?\-]/);
+    //         // alert(pasxsword)
+    // // password += (Math.pow(10, numberMinCount) + Math.floor(Math.random() * (9 * Math.pow(10, numberMinCount))))
+    //     }
+    // }
     return password;
 }
 
@@ -51,7 +54,7 @@ function getChanges() {
             lowercaseMinCount = data.lowercaseMinCount
             numberMinCount = data.numberMinCount
             specialMinCount = data.specialMinCount
-            pronounceable = data.pronounceable
+            pronounceable = false
             console.log("got changes: ", data)
 
             $('#maxLength').val(maxLength)
@@ -62,8 +65,8 @@ function getChanges() {
             $('#specialMinCount').val(specialMinCount)
             $('#pronounceable').val(pronounceable)
 
-            updateCheckbox()
-            updateCheckbox()
+            // updateCheckbox()
+            // updateCheckbox()
             if(!pronounceable){
                 $('#pronounceable').removeAttr('checked')
             }
@@ -92,34 +95,36 @@ function saveChanges() {
 $('#btnGen').click(
     function() {
         console.log("generating password")
-        maxLength = +$('#maxLength').val() || 18;
-        minLength = +$('#minLength').val() || 12;
-        uppercaseMinCount = +$('#uppercaseMinCount').val() || 3;
-        lowercaseMinCount = +$('#lowercaseMinCount').val() || 3;
-        numberMinCount = +$('#numberMinCount').val() || 2;
-        specialMinCount = +$('#specialMinCount').val() || 2;
-        pronounceable = ($('#pronounceable').val() == 'true')
+        maxLength = $('#maxLength').val() || 18;
+        minLength = $('#minLength').val() || 12;
+        uppercaseMinCount = $('#uppercaseMinCount').val() || 3;
+        lowercaseMinCount = $('#lowercaseMinCount').val() || 3;
+        numberMinCount = $('#numberMinCount').val() || 2;
+        specialMinCount = $('#specialMinCount').val() || 2;
+        pronounceable = ($('#pronounceable').is(':checked'))
 
         console.log("params: ", maxLength, minLength, uppercaseMinCount, lowercaseMinCount, numberMinCount, specialMinCount, pronounceable)
         var pword = customPassworsd()
 
         password = $('#password')
         password.val(pword)
-
-        var range = document.createRange();
-        range.selectNode(password[0]);
-        window.getSelection().addRange(range);
+        password.select()
+        // var range = document.createRange();
+        // range.selectNode(password[0]);
+        // window.getSelection().addRange(range);
 
         try {
             // Now that we've selected the anchor text, execute the copy command  
             var successful = document.execCommand('copy');
             var msg = successful ? 'successful' : 'unsuccessful';
             console.log('Copy password command was ' + msg);
-            $('#msg').text('password copied to clipboard')
-            p.find('#message').html('copied password to clipboard');
+            $('#msg').text('password copied to clipboard:' + msg)
+            saveChanges();
+            $('#msg').text('password copied to clipboard:' + msg)
+            // p.find('#message').html('copied password to clipboard');
 
         } catch (err) {
-            console.log('Oops, unable to copy');
+            console.log('Oops, unable to copy',err);
         }
     })
 $('#btnSav').click(

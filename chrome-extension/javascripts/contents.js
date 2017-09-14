@@ -19,7 +19,24 @@ function inject(input) {
         console.log(img)
 
         p.click(function() {
+            alert("p clicked 2")
             p.toggle()
+            var password = p.find('#password')[0]
+            password.select();
+            alert(password.val())
+
+            try {
+                // Now that we've selected the anchor text, execute the copy command  
+                var successful = document.execCommand('copy');
+                var msg = successful ? 'successful' : 'unsuccessful';
+                console.log('Copy password command was ' + msg);
+                p.find('#message').html('copied password to clipboard');
+                alert("copied password")
+
+            } catch (err) {
+                console.log('Oops, unable to copy');
+                alert("failed select")
+            }
 
         })
         img.click(function() {
@@ -48,12 +65,15 @@ function inject(input) {
             range.selectNode(password);
             window.getSelection().addRange(range);
 
+            password.select()
+
             try {
                 // Now that we've selected the anchor text, execute the copy command  
                 var successful = document.execCommand('copy');
                 var msg = successful ? 'successful' : 'unsuccessful';
                 console.log('Copy password command was ' + msg);
                 p.find('#message').html('copied password to clipboard');
+                alert("copied password")
 
             } catch (err) {
                 console.log('Oops, unable to copy');
