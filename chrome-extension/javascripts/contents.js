@@ -1,3 +1,18 @@
+// var generatePassword = require("password-generator");
+var maxLength = 88;
+var minLength = 12;
+var uppercaseMinCount = 3;
+var lowercaseMinCount = 3;
+var numberMinCount = 2;
+var specialMinCount = 2;
+var pronouncable = true
+
+var UPPERCASE_RE = /([A-Z])/g;
+var LOWERCASE_RE = /([a-z])/g;
+var NUMBER_RE = /([\d])/g;
+var SPECIAL_CHAR_RE = /([\?\-])/g;
+var NON_REPEATING_CHAR_RE = /([\w\d\?\-])\1{2,}/g;
+
 function inject(input) {
     
     var username = $('<username></username>');
@@ -17,33 +32,11 @@ function inject(input) {
         img.attr('src', chrome.extension.getURL('javascripts/icon.png'))
         p.hide()
         console.log(img)
+        getChanges(p)
 
-        p.click(function() {
-            alert("p clicked 2")
-            getChanges()
-            
-            var password = p.find('#password')[0]
-            alert(JSON.stringify(password))
-            password.select();
-            p.toggle()
-            
-
-            try {
-                // Now that we've selected the anchor text, execute the copy command  
-                var successful = document.execCommand('copy');
-                var msg = successful ? 'successful' : 'unsuccessful';
-                console.log('Copy password command was ' + msg);
-                p.find('#message').html('copied password to clipboard');
-                alert("copied password")
-
-            } catch (err) {
-                console.log('Oops, unable to copy');
-                alert("failed select")
-            }
-
-        })
         img.click(function() {
             var oldClick = $('body')[0].onclick
+
 
             $('body')[0].onclick = function() {
                 console.log('clicked body')
@@ -56,58 +49,19 @@ function inject(input) {
             
             $('body').prepend(p)
             p.show()
-            var password = p.find('#password')[0]
 
-            var passwordText = customPassworsd()
-            p.find('#password').val(passwordText)
-            window.getSelection().removeAllRanges();
-            // var password = document.querySelector('#password');
-            password.select();
-            var range = document.createRange();
-            range.selectNode(password);
-            window.getSelection().addRange(range);
-
-            password.select()
-
-            try {
-                // Now that we've selected the anchor text, execute the copy command  
-                var successful = document.execCommand('copy');
-                var msg = successful ? 'successful' : 'unsuccessful';
-                console.log('Copy password command was ' + msg);
-                p.find('#message').html('copied password to clipboard');
-                alert("copied password")
-
-            } catch (err) {
-                console.log('Oops, unable to copy');
-            }
-        })
-        var btn = p.find('button');
-        btn.hide();
-        btn.click(function() {
-                // body...
-                fill(customPassworsd)
+            p.find('#btnGen').click(function(e){
+                // alert("clicked generatePassword")
+                console.log("clicked generatePassword")
+                generate(p)
+                e.stopPropagation();
             })
-            // pop.css('left', '110%')
-            // pop.css('top', '-10px')
-            // pop.css('width', '250px')
+        })
         username.append(img)
-        // $('body').prepend(p)
     }, 'html')
 
 }
-
-    // chrome.runtime.onMessage.addListener(
-    //   function(request, sender, sendResponse) {
-    //     if (request.type == "getUrls"){
-    //       getUrls(request, sender, sendResponse)
-    //     }
-    // });
-
-// inject($('input')[0])
-// 
-// 
-
-
+ 
 
 setTimeout( function() {
     $('body').prepend($('<p></p>'))
@@ -127,20 +81,7 @@ setTimeout( function() {
 }, 3000)
 
 
-// var generatePassword = require("password-generator");
-var maxLength = 18;
-var minLength = 12;
-var uppercaseMinCount = 3;
-var lowercaseMinCount = 3;
-var numberMinCount = 2;
-var specialMinCount = 2;
-var pronouncable = true
 
-var UPPERCASE_RE = /([A-Z])/g;
-var LOWERCASE_RE = /([a-z])/g;
-var NUMBER_RE = /([\d])/g;
-var SPECIAL_CHAR_RE = /([\?\-])/g;
-var NON_REPEATING_CHAR_RE = /([\w\d\?\-])\1{2,}/g;
 
 function isStrongEnough(password) {
     var uc = password.match(UPPERCASE_RE);
@@ -159,21 +100,20 @@ function isStrongEnough(password) {
 function customPassworsd() {
     var password = "";
     var randomLength = Math.floor(Math.random() * (maxLength - minLength)) + minLength;
-    // while (!isStrongEnough(password)) {
-    password = generatePassword(randomLength, pronouncable, /[\w\d\?\-]/);
-    // s}
+    var trys = 0
+    while (!isStrongEnough(password) && trys < 1000) {
+        trys++
+        password = generatePassword(randomLength, pronounceable, /[\w\d\?\-]/);
+    }
     password += (Math.pow(10, numberMinCount) + Math.floor(Math.random() * (9 * Math.pow(10, numberMinCount))))
     return password;
 }
 
-// console.log(customPassworsd())
-// fill(customPassworsd())
 console.log($('input'))
-    // $('input').val('input')
 console.log(chrome.extension.getURL('pop.html'))
 
 
-function getChanges() {
+function getChanges(p) {
     chrome.storage.sync.get(
         function(data) {
             maxLength = data.maxLength
@@ -185,20 +125,40 @@ function getChanges() {
             pronounceable = false
             console.log("got changes: ", data)
 
-            $('#maxLength').val(maxLength)
-            $('#minLength').val(minLength)
-            $('#uppercaseMinCount').val(uppercaseMinCount)
-            $('#lowercaseMinCount').val(lowercaseMinCount)
-            $('#numberMinCount').val(numberMinCount)
-            $('#specialMinCount').val(specialMinCount)
-            $('#pronounceable').val(pronounceable)
+            p.find('#maxLength').val(maxLength)
+            p.find('#minLength').val(minLength)
+            p.find('#uppercaseMinCount').val(uppercaseMinCount)
+            p.find('#lowercaseMinCount').val(lowercaseMinCount)
+            p.find('#numberMinCount').val(numberMinCount)
+            p.find('#specialMinCount').val(specialMinCount)
+            p.find('#pronounceable').val(pronounceable)
 
-            // updateCheckbox()
-            // updateCheckbox()
             if(!pronounceable){
                 $('#pronounceable').removeAttr('checked')
             }
-            alert(data)
+
+            generate(p)
         })
+}
+
+function generate(p){
+    var password = p.find('#password')[0]
+
+    var passwordText = customPassworsd()
+    p.find('#password').val(passwordText)
+    password.select();
+
+    try {
+        // Now that we've selected the anchor text, execute the copy command  
+        var successful = document.execCommand('copy');
+        var msg = successful ? 'successful' : 'unsuccessful';
+        console.log('Copy password command was ' + msg);
+        p.find('#message').html('copied password to clipboard');
+        // alert("copied password")
+
+    } catch (err) {
+        console.log('Oops, unable to copy');
+
+    }
 }
 
