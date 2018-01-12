@@ -41,6 +41,7 @@ function inject(input) {
             $('body')[0].onclick = function() {
                 console.log('clicked body')
                 p.show();
+                generate(p)
                 $('body')[0].onclick = function(){
                     p.hide();
                     $('body')[0].onclick = oldClick
@@ -98,6 +99,7 @@ function isStrongEnough(password) {
 }
 
 function customPassworsd() {
+    console.log("customPassworsd" , maxLength, minLength)
     var password = "";
     var randomLength = Math.floor(Math.random() * (maxLength - minLength)) + minLength;
     var trys = 0
@@ -116,13 +118,13 @@ console.log(chrome.extension.getURL('pop.html'))
 function getChanges(p) {
     chrome.storage.sync.get(
         function(data) {
-            maxLength = data.maxLength
-            minLength = data.minLength
-            uppercaseMinCount = data.uppercaseMinCount
-            lowercaseMinCount = data.lowercaseMinCount
-            numberMinCount = data.numberMinCount
-            specialMinCount = data.specialMinCount
-            pronounceable = false
+            maxLength =  data.maxLength || maxLength
+            minLength = data.minLength || minLength
+            uppercaseMinCount = data.uppercaseMinCount || uppercaseMinCount
+            lowercaseMinCount = data.lowercaseMinCount || lowercaseMinCount
+            numberMinCount = data.numberMinCount || numberMinCount 
+            specialMinCount = data.specialMinCount || specialMinCount
+            pronounceable = false 
             console.log("got changes: ", data)
 
             p.find('#maxLength').val(maxLength)
@@ -148,13 +150,25 @@ function generate(p){
     p.find('#password').val(passwordText)
     password.select();
 
+    console.log("sending to background" + passwordText)
+    chrome.runtime.sendMessage({
+        type: 'copy',
+        text: passwordText
+    });
+
     try {
         // Now that we've selected the anchor text, execute the copy command  
         var successful = document.execCommand('copy');
         var msg = successful ? 'successful' : 'unsuccessful';
-        console.log('Copy password command was ' + msg);
-        p.find('#message').html('copied password to clipboard');
-        // alert("copied password")
+
+        if (successful){
+            console.log('Copy password command was ' + msg);
+            p.find('#message').html('Copied password to clipboard !!');
+            // alert("copied password")
+        } else {
+            console.log("password copy to clipboard failed")
+        }
+
 
     } catch (err) {
         console.log('Oops, unable to copy');

@@ -117,10 +117,14 @@ $('#btnGen').click(
             // Now that we've selected the anchor text, execute the copy command  
             var successful = document.execCommand('copy');
             var msg = successful ? 'successful' : 'unsuccessful';
-            console.log('Copy password command was ' + msg);
-            $('#msg').text('password copied to clipboard:' + msg)
-            saveChanges();
-            $('#msg').text('password copied to clipboard:' + msg)
+            
+            if (successful){
+                console.log('Copy password command was ' + msg);
+                $('#msg').text('password copied to clipboard:' + msg)
+                saveChanges();
+                $('#msg').text('password copied to clipboard:' + msg)
+            }
+
             // p.find('#message').html('copied password to clipboard');
 
         } catch (err) {
@@ -188,4 +192,19 @@ function updateCheckbox () {
 getChanges();
 $('#pronounceable').change(updateCheckbox)
 
+
+// # copy from content to clipboard
+chrome.runtime.onMessage.addListener(function(message) {
+    console.log("got copy msg /index.js" + message)
+    if (message && message.type == 'copy') {
+        var input = document.createElement('textarea');
+        document.body.appendChild(input);
+        input.value = message.text;
+        input.focus();
+        input.select();
+        document.execCommand('Copy');
+        input.remove();
+        console.log("copied")
+    }
+});
 
